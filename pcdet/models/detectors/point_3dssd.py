@@ -3,7 +3,7 @@ import torch
 from .detector3d_template import Detector3DTemplate
 from ...ops.iou3d_nms import iou3d_nms_utils
 from ...ops.roiaware_pool3d import roiaware_pool3d_utils
-
+from pcdet.utils.density_calculation import cnt_ball_points
 
 class Point3DSSD(Detector3DTemplate):
     def __init__(self, model_cfg, num_class, dataset):
@@ -11,7 +11,15 @@ class Point3DSSD(Detector3DTemplate):
         self.module_list = self.build_networks()
 
     def forward(self, batch_dict):
+        # print(batch_dict['points'].shape)  #torch.Size([16384, 5])
+        idx_cnt = cnt_ball_points(points=batch_dict['points'])
+        # print(idx_cnt.type) tensor
+        batch_dict['density'] = idx_cnt
+        print(batch_dict['density'].shape)
+        print(batch_dict['points'].shape)
         for cur_module in self.module_list:
+            # print('cur_module',cur_module)
+
             batch_dict = cur_module(batch_dict)
 
         if self.training:

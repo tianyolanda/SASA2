@@ -16,11 +16,14 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
 
     for cur_it in range(total_it_each_epoch):
         try:
-            batch = next(dataloader_iter)
+            batch = next(dataloader_iter) #查看batch的数据格式
         except StopIteration:
             dataloader_iter = iter(train_loader)
             batch = next(dataloader_iter)
             print('new iters')
+        # vvv_1 = batch['points'][-30:,:]
+        # vvv_2 = batch['points'][16300:16600,:]
+        # vvv_3 = batch['points'][17000:17300,:]
 
         lr_scheduler.step(accumulated_iter)
 
@@ -32,10 +35,14 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
         if tb_log is not None:
             tb_log.add_scalar('meta_data/learning_rate', cur_lr, accumulated_iter)
 
-        model.train()
+        model.train() # 设置模型状态,为train.仅设置状态(会影响某些层的行为,如bn/dropout层),不触发训练.
         optimizer.zero_grad()
 
-        loss, tb_dict, disp_dict = model_func(model, batch)
+        # print('batch.size()',batch)
+        loss, tb_dict, disp_dict = model_func(model, batch) # 从此处进入到class Point3DSSD的forward函数
+        # 注: forward函数是在你显式调用模型(如model(input))时执行的。
+
+        torch.autograd.set_detect_anomaly(True)
 
         loss.backward()
         clip_grad_norm_(model.parameters(), optim_cfg.GRAD_NORM_CLIP)
@@ -75,7 +82,7 @@ def train_model(model, optimizer, train_loader, model_func, lr_scheduler, optim_
 
         dataloader_iter = iter(train_loader)
         for cur_epoch in tbar:
-            if train_sampler is not None:
+            if train_sampler is not None: # False
                 train_sampler.set_epoch(cur_epoch)
 
             # train one epoch

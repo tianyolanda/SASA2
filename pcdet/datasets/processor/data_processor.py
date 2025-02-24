@@ -160,12 +160,20 @@ class DataProcessor(object):
         if num_points == -1:
             return data_dict
 
-        points = data_dict['points']
+
+        points = data_dict['points'] # 18000
+        # print('@@@@@@')
+        # print('points', len(points))
+
         if num_points < len(points):
             pts_depth = np.linalg.norm(points[:, 0:3], axis=1)
             pts_near_flag = pts_depth < 40.0
             far_idxs_choice = np.where(pts_near_flag == 0)[0]
             near_idxs = np.where(pts_near_flag == 1)[0]
+
+            # print('len(near_idxs)',len(near_idxs))
+            # print('len(far_idxs_choice)',len(far_idxs_choice))
+
             if num_points > len(far_idxs_choice):
                 near_idxs_choice = np.random.choice(near_idxs, num_points - len(far_idxs_choice), replace=False)
                 choice = np.concatenate((near_idxs_choice, far_idxs_choice), axis=0) \
@@ -180,7 +188,10 @@ class DataProcessor(object):
                 extra_choice = np.random.choice(choice, num_points - len(points), replace=True)
                 choice = np.concatenate((choice, extra_choice), axis=0)
             np.random.shuffle(choice)
-        data_dict['points'] = points[choice]
+        # print('sample_points, before choice',points.shape)
+        data_dict['points'] = points[choice] # 16384
+        # print('sample_points, after choice',data_dict['points'].shape)
+
         return data_dict
 
     def forward(self, data_dict):

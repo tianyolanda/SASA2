@@ -419,6 +419,7 @@ __global__ void furthest_point_sampling_weights_kernel(int b, int n, int m,
     // output:
     //      idx: (B, M)
 
+    //cout<<block_size<<endl;
     if (m <= 0) return;
     __shared__ float dists[block_size];
     __shared__ int dists_i[block_size];

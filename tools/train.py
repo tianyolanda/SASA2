@@ -4,7 +4,7 @@ import glob
 import os
 from pathlib import Path
 from test import repeat_eval_ckpt
-
+# 在这里就运行了getitem函数........
 import torch
 import torch.distributed as dist
 import torch.nn as nn
@@ -16,11 +16,12 @@ from pcdet.models import build_network, model_fn_decorator
 from pcdet.utils import common_utils
 from train_utils.optimization import build_optimizer, build_scheduler
 from train_utils.train_utils import train_model
+from torchsummary import summary
 
 
 def parse_config():
     parser = argparse.ArgumentParser(description='arg parser')
-    parser.add_argument('--cfg_file', type=str, default=None, help='specify the config for training')
+    parser.add_argument('--cfg_file', type=str, default='cfgs/kitti_models/3dssd_sasa.yaml', help='specify the config for training')
 
     parser.add_argument('--batch_size', type=int, default=None, required=False, help='batch size for training')
     parser.add_argument('--epochs', type=int, default=None, required=False, help='number of epochs to train for')
@@ -116,6 +117,8 @@ def main():
     if args.sync_bn:
         model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
     model.cuda()
+    print('train_set',train_set)
+    # summary(model,)
 
     optimizer = build_optimizer(model, cfg.OPTIMIZATION)
 

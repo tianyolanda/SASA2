@@ -253,6 +253,10 @@ def ball_query(radius: float, nsample: int, xyz: torch.Tensor, new_xyz: torch.Te
     idx_cnt = torch.cuda.IntTensor(B, npoint).zero_()
 
     pointnet2.ball_query_wrapper(B, N, npoint, radius, nsample, new_xyz, xyz, idx_cnt, idx)
+    # print('******')
+    # print('ball query')
+    # print(B, N, npoint, radius, nsample, idx_cnt)
+
     return idx_cnt, idx
 
 
@@ -261,11 +265,11 @@ def ball_query_dilated(radius_in: float, radius_out: float, nsample: int, xyz: t
     """
     :param radius_in: float, radius of the inner balls
     :param radius_out: float, radius of the outer balls
-    :param nsample: int, maximum number of features in the balls
+    :param nsample: int, maximum number of features in the balls 查询点数上限（多余的都不记录）
     :param xyz: (B, N, 3) xyz coordinates of the features
     :param new_xyz: (B, npoint, 3) centers of the ball query
     :return:
-        idx_cnt: (B, npoint) tensor with the number of grouped points for each ball query
+        idx_cnt: (B, npoint) tensor with the number of grouped points for each ball query　每个目标点的查询点数,共npoint个
         idx: (B, npoint, nsample) tensor with the indicies of the features that form the query balls
     """
     assert new_xyz.is_contiguous()
@@ -277,6 +281,10 @@ def ball_query_dilated(radius_in: float, radius_out: float, nsample: int, xyz: t
     idx = torch.cuda.IntTensor(B, npoint, nsample).zero_()
 
     pointnet2.ball_query_dilated_wrapper(B, N, npoint, radius_in, radius_out, nsample, new_xyz, xyz, idx_cnt, idx)
+    # print('--------')
+    # print('dilated')
+    # print(B, N, npoint, radius_in, radius_out, nsample, idx_cnt)
+
     return idx_cnt, idx
 
 

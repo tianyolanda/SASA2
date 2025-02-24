@@ -685,8 +685,9 @@ class PointHeadVote(PointHeadTemplate):
 
         point_loss_sasa, tb_dict_3 = self.get_sasa_layer_loss()
         if point_loss_sasa is not None:
+            # print('point_loss_sasa is not None....')
             tb_dict.update(tb_dict_3)
-            point_loss += point_loss_sasa
+            point_loss = point_loss + point_loss_sasa
         return point_loss, tb_dict
 
     def forward(self, batch_dict):
@@ -757,7 +758,6 @@ class PointHeadVote(PointHeadTemplate):
             point_features,
             new_xyz=vote_coords
         )
-
         point_features = self.shared_fc_layer(point_features)
         point_cls_preds = self.cls_layers(point_features)
         point_reg_preds = self.reg_layers(point_features)

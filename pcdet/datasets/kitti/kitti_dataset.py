@@ -9,7 +9,8 @@ from ...utils import box_utils, calibration_kitti, common_utils, object3d_kitti
 from ..dataset import DatasetTemplate
 
 
-class KittiDataset(DatasetTemplate):
+
+class KittiDataset(DatasetTemplate): #　走了三次这里？
     def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None):
         """
         Args:
@@ -100,6 +101,7 @@ class KittiDataset(DatasetTemplate):
     @staticmethod
     def get_fov_flag(pts_rect, img_shape, calib):
         """
+        判断一组三维点是否位于相机的视场（Field of View, FOV）内，并且深度值有效。
         Args:
             pts_rect:
             img_shape:
@@ -114,6 +116,10 @@ class KittiDataset(DatasetTemplate):
         val_flag_merge = np.logical_and(val_flag_1, val_flag_2)
         pts_valid_flag = np.logical_and(val_flag_merge, pts_rect_depth >= 0)
 
+        # print('np.sum(val_flag_1)', np.sum(val_flag_1))  # 53679
+        # print('np.sum(val_flag_2)', np.sum(val_flag_2))  # 69173
+        # print('np.sum(val_flag_merge)', np.sum(val_flag_merge))  # 40475
+        # print('np.sum(pts_valid_flag)', np.sum(pts_valid_flag))  # 20632
         return pts_valid_flag
 
     def get_infos(self, num_workers=4, has_label=True, count_inside_pts=True, sample_id_list=None):
@@ -182,6 +188,11 @@ class KittiDataset(DatasetTemplate):
                         flag = box_utils.in_hull(pts_fov[:, 0:3], corners_lidar[k])
                         num_points_in_gt[k] = flag.sum()
                     annotations['num_points_in_gt'] = num_points_in_gt
+
+                    # print('points',points.shape)
+                    # print('pts_rect',pts_rect.shape)
+                    # print('pts_fov',pts_fov.shape)
+                    # print('num_points_in_gt',num_points_in_gt)
 
             return info
 
@@ -338,6 +349,7 @@ class KittiDataset(DatasetTemplate):
         return len(self.kitti_infos)
 
     def __getitem__(self, index):
+        # print('-------prepare data') # train.py时才走到这里
         # index = 4
         if self._merge_all_iters_to_one_epoch:
             index = index % len(self.kitti_infos)
@@ -346,14 +358,21 @@ class KittiDataset(DatasetTemplate):
 
         sample_idx = info['point_cloud']['lidar_idx']
 
-        points = self.get_lidar(sample_idx)
+        points = self.get_lidar(sample_idx) # 原始点云
+        # print('points.shape',points.shape)  # 120000左右
+
         calib = self.get_calib(sample_idx)
 
         img_shape = info['image']['image_shape']
         if self.dataset_cfg.FOV_POINTS_ONLY:
-            pts_rect = calib.lidar_to_rect(points[:, 0:3])
-            fov_flag = self.get_fov_flag(pts_rect, img_shape, calib)
+            pts_rect = calib.lidar_to_rect(points[:, 0:3]) # 113357
+            fov_flag = self.get_fov_flag(pts_rect, img_shape, calib) # 只保留前视图中可视的点
+            # print('aaaa', pts_rect.shape) # 120000
+            # print('ffff', fov_flag.shape) # 120000
+            # print('ffffsum', np.sum(fov_flag)) # 120000
+
             points = points[fov_flag]
+            # print('0000',points.shape) # 20000左右 (20079, 4)
 
         input_dict = {
             'points': points,
@@ -377,14 +396,18 @@ class KittiDataset(DatasetTemplate):
             if road_plane is not None:
                 input_dict['road_plane'] = road_plane
 
+        # print('1111',input_dict['points'].shape)  # 20000左右
         data_dict = self.prepare_data(data_dict=input_dict)
-
+        # prepare_data出来之后points点数 16384
         data_dict['image_shape'] = img_shape
+
+        # print('2222',data_dict['points'].shape)
         return data_dict
 
 
 def create_kitti_infos(dataset_cfg, class_names, data_path, save_path, workers=4):
     dataset = KittiDataset(dataset_cfg=dataset_cfg, class_names=class_names, root_path=data_path, training=False)
+    print('11111111111')
     train_split, val_split, trainval_split = 'train', 'val', 'trainval'
 
     train_filename = save_path / ('kitti_infos_%s.pkl' % train_split)
@@ -440,3 +463,15 @@ if __name__ == '__main__':
             data_path=ROOT_DIR / 'data' / 'kitti',
             save_path=ROOT_DIR / 'data' / 'kitti'
         )
+
+    # '''
+    #     python - m
+    #     pcdet.datasets.kitti.kitti_dataset
+    #     create_kitti_infos
+    #     tools / cfgs / dataset_configs / kitti_dataset.yaml
+    # '''
+    #
+    # create_kitti_infos('tools/cfgs/dataset_configs/kitti_dataset.yaml')
+    #
+
+

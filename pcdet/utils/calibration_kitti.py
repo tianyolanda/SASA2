@@ -74,6 +74,7 @@ class Calibration(object):
 
     def rect_to_img(self, pts_rect):
         """
+        将三维点从相机坐标系投影到图像平面，并计算每个点的深度值。
         :param pts_rect: (N, 3)
         :return pts_img: (N, 2)
         """

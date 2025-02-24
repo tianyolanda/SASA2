@@ -2,7 +2,9 @@
 **build**
 **egg-info**
 data/
+data-backup/
 output/
+output-backup/
 spconv/
 tools/cfgs/experiments/
 tools/cfgs/cluster/

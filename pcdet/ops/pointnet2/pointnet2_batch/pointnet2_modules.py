@@ -40,7 +40,13 @@ class _PointnetSAModuleBase(nn.Module):
             new_features = self.mlps[i](new_features)  # (B, mlp[-1], npoint, nsample)
             idx_cnt_mask = (idx_cnt > 0).float()
             idx_cnt_mask = idx_cnt_mask.unsqueeze(dim=1).unsqueeze(dim=-1)
-            new_features *= idx_cnt_mask
+            # new_features *= idx_cnt_mask
+            new_features = new_features * idx_cnt_mask
+            '''
+                allow_unreachable=True, accumulate_grad=True)  # allow_unreachable flag
+RuntimeError: one of the variables needed for gradient computation has been modified by an inplace operation: [torch.cuda.FloatTensor [256, 512, 1, 32]], which is output 0 of ReluBackward0, is at version 1; expected version 0 instead. Hint: the backtrace further above shows the operation that failed to compute its gradient. The variable in question was changed in there or anywhere later. Good luck!
+
+            '''
             if self.pool_method == 'max_pool':
                 new_features = F.max_pool2d(
                     new_features, kernel_size=[1, new_features.size(3)]
@@ -148,21 +154,29 @@ class _PointnetSAModuleFSBase(nn.Module):
                 scores=None):
         """
         :param xyz: (B, N, 3) tensor of the xyz coordinates of the features
+               xyz: torch.Size([4, 16384, 3])
+
         :param features: (B, C, N) tensor of the descriptors of the features
+               features: torch.Size([4, 1, 16384])
+
         :param new_xyz:
+               new_xyz: None
         :param scores: (B, N) tensor of confidence scores of points, required when using s-fps
+               scores: 在第一个PointnetSAModuleFSMSG()里是None
         :return:
             new_xyz: (B, npoint, 3) tensor of the new features' xyz
             new_features: (B, npoint, \sum_k(mlps[k][-1])) tensor of the new_features descriptors
         """
-        new_features_list = []
+        #　self.npoint_list: <class 'list'>: [4096]
+        #　self.sample_range_list: <class 'list'>: [[0, 16384]]
 
-        xyz_flipped = xyz.transpose(1, 2).contiguous()
+        new_features_list = []
+        xyz_flipped = xyz.transpose(1, 2).contiguous()  #　torch.Size([4, 3, 16384])
         if new_xyz is None:
             assert len(self.npoint_list) == len(self.sample_range_list) == len(self.sample_method_list)
             sample_idx_list = []
-            for i in range(len(self.sample_method_list)):
-                xyz_slice = xyz[:, self.sample_range_list[i][0]:self.sample_range_list[i][1], :].contiguous()
+            for i in range(len(self.sample_method_list)): # 循环不同的sample方式
+                xyz_slice = xyz[:, self.sample_range_list[i][0]:self.sample_range_list[i][1], :].contiguous() # torch.Size([4, 16384, 3])
                 if self.sample_method_list[i] == 'd-fps':
                     sample_idx = pointnet2_utils.furthest_point_sample(xyz_slice, self.npoint_list[i])
                 elif self.sample_method_list[i] == 'f-fps':
@@ -184,13 +198,16 @@ class _PointnetSAModuleFSBase(nn.Module):
                 else:
                     raise NotImplementedError
 
+                # 第一个循环:
+                # sample_method_list: <class 'list'>: ['d-fps']
+                # sample_idx: torch.Size([4, 4096])
                 sample_idx_list.append(sample_idx + self.sample_range_list[i][0])
 
-            sample_idx = torch.cat(sample_idx_list, dim=-1)
+            sample_idx = torch.cat(sample_idx_list, dim=-1) # torch.Size([4, 4096]) , torch.Size([4, 512])
             new_xyz = pointnet2_utils.gather_operation(
                 xyz_flipped,
                 sample_idx
-            ).transpose(1, 2).contiguous()  # (B, npoint, 3)
+            ).transpose(1, 2).contiguous()  # (B, npoint, 3) torch.Size([4, 512, 3])
             
             if self.skip_connection: 
                 old_features = pointnet2_utils.gather_operation(
@@ -203,8 +220,11 @@ class _PointnetSAModuleFSBase(nn.Module):
             new_features = self.mlps[i](new_features)  # (B, mlp[-1], npoint, nsample)
             idx_cnt_mask = (idx_cnt > 0).float()  # (B, npoint)
             idx_cnt_mask = idx_cnt_mask.unsqueeze(1).unsqueeze(-1)  # (B, 1, npoint, 1)
-            new_features *= idx_cnt_mask
-
+            # new_features *= idx_cnt_mask
+            '''
+        RuntimeError: one of the variables needed for gradient computation has been modified by an inplace operation: [torch.cuda.FloatTensor [256, 512, 1, 32]], which is output 0 of ReluBackward0, is at version 1; expected version 0 instead. Hint: the backtrace further above shows the operation that failed to compute its gradient. The variable in question was changed in there or anywhere later. Good luck!
+            '''
+            new_features = new_features * idx_cnt_mask
             if self.pool_method == 'max_pool':
                 pooled_features = F.max_pool2d(
                     new_features, kernel_size=[1, new_features.size(3)]
@@ -295,7 +315,8 @@ class PointnetSAModuleFSMSG(_PointnetSAModuleFSBase):
             former_radius = radius
             mlp_spec = mlps[i]
             if use_xyz:
-                mlp_spec[0] += 3
+                # print('here,mlp_spec[0]',mlp_spec[0])
+                mlp_spec[0] = mlp_spec[0] + 3
 
             shared_mlp = []
             for k in range(len(mlp_spec) - 1):
@@ -306,7 +327,7 @@ class PointnetSAModuleFSMSG(_PointnetSAModuleFSBase):
                 ])
             self.mlps.append(nn.Sequential(*shared_mlp))
             in_channels = mlp_spec[0] - 3 if use_xyz else mlp_spec[0]
-            out_channels += mlp_spec[-1]
+            out_channels = out_channels + mlp_spec[-1]
 
         self.pool_method = pool_method
         self.dilated_radius_group = dilated_radius_group
@@ -314,7 +335,7 @@ class PointnetSAModuleFSMSG(_PointnetSAModuleFSBase):
         self.weight_gamma = weight_gamma
 
         if skip_connection:
-            out_channels += in_channels
+            out_channels = out_channels + in_channels
 
         if aggregation_mlp is not None:
             shared_mlp = []
