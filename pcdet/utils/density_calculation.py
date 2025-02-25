@@ -47,11 +47,11 @@ def vis3d_pyvista(points,feature):
         plotter.show()
     else:
         print('the shape of points is incorrect!')
-def cnt_ball_points(radius=4, nsample=500, points=''):
+def cnt_ball_points(radius=1, nsample=500, points=''):
     '''
 
     :param radius: 球半径
-    :param nsample: 在球内最多找多少个点,算法停
+    :param nsample: 在球内最多找多少个点,算法停 (点数最大值,点数上限)
     :param points: 输入点云,numpy.ndarray
     当batch size>1 时, 多个输入点云会摞在一起
     example: 比如point的尺寸是[32768, 5]
@@ -85,8 +85,8 @@ def cnt_ball_points(radius=4, nsample=500, points=''):
         else:
             idx_cnt_batch = torch.cat((idx_cnt_batch,idx_cnt),dim=1)
         # print('idx_cnt_batch.size()',idx_cnt_batch.size())
-
-    return idx_cnt_batch
+    idx_cnt_batch_float = idx_cnt_batch.to(dtype=torch.float32)
+    return idx_cnt_batch_float
 
 '''
 def ball_query(radius: float, nsample: int, xyz: torch.Tensor, new_xyz: torch.Tensor):

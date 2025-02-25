@@ -1,6 +1,6 @@
 #　conda环境
 sasa2
-
+export PYTHONPATH='/home/ubuntu/codes/2025codes/SASA2'
 
 # 训练
 export OMP_NUM_THREADS=2 
@@ -25,6 +25,27 @@ python train.py --cfg_file cfgs/kitti_models/3dssd_sasa.yaml
 
 # 计算网络每层尺寸(没跑明白)
 pip install torchsummary
+
+# 训练报错(20250224)
+OSError: libcuhash.so: cannot open shared object file: No such file or directory
+## 解决
+1. 查看libcuhash.so是否存在
+ubuntu@ubuntu-tt:~$ find / -name "libcuhash.so" 2>/dev/null
+/home/ubuntu/anaconda3/envs/sasa2/lib/python3.7/site-packages/spconv/libcuhash.so
+/home/ubuntu/.local/share/Trash/files/lib.6.linux-x86_64-cpython-37/spconv/libcuhash.so
+/home/ubuntu/.local/share/Trash/files/SASA/spconv/build/lib.linux-x86_64-cpython-37/spconv/libcuhash.so
+/home/ubuntu/codes/2025codes/SASA1/spconv/build/lib.linux-x86_64-cpython-37/spconv/libcuhash.so
+/home/ubuntu/codes/2025codes/SASA2/spconv/build/lib.linux-x86_64-cpython-37/spconv/libcuhash.so
+/home/ubuntu/codes/2025codes/backup/SASA(修改代码至能训练)/spconv/build/lib.linux-x86_64-cpython-37/spconv/libcuhash.so
+/home/ubuntu/codes/2025codes/backup/SASA(20250224)/spconv/build/lib.linux-x86_64-cpython-37/spconv/libcuhash.so
+
+2. 复制到LD_LIBRARY_PATH=/opt/cuda/lib64路径下
+ubuntu@ubuntu-tt:/usr/local/cuda/lib64$ ln -s /home/ubuntu/anaconda3/envs/sasa2/lib/python3.7/site-packages/spconv/libcuhash.so .
+ln: failed to create symbolic link './libcuhash.so': Permission denied
+ubuntu@ubuntu-tt:/usr/local/cuda/lib64$ sudo ln -s /home/ubuntu/anaconda3/envs/sasa2/lib/python3.7/site-packages/spconv/libcuhash.so .
+
+3. 出现错误的原因
+不清楚
 
 # 训练报错
 ## 解决

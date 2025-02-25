@@ -12,11 +12,12 @@ class Point3DSSD(Detector3DTemplate):
 
     def forward(self, batch_dict):
         # print(batch_dict['points'].shape)  #torch.Size([16384, 5])
-        idx_cnt = cnt_ball_points(points=batch_dict['points'])
+        density_idx_cnt = cnt_ball_points(points=batch_dict['points'])
+        density_idx_cnt = density_idx_cnt.transpose(1, 0).contiguous()
         # print(idx_cnt.type) tensor
-        batch_dict['density'] = idx_cnt
-        print(batch_dict['density'].shape)
-        print(batch_dict['points'].shape)
+        batch_dict['density'] = density_idx_cnt
+        # print(batch_dict['density'].shape)
+        # print(batch_dict['points'].shape)
         for cur_module in self.module_list:
             # print('cur_module',cur_module)
 

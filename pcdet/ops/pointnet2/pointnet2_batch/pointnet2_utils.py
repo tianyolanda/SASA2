@@ -82,6 +82,29 @@ def furthest_point_sample_weights(xyz: torch.Tensor, weights: torch.Tensor, npoi
     pointnet2.furthest_point_sampling_weights_wrapper(B, N, npoint, xyz, weights, temp, output)
     return output
 
+@torch.no_grad()
+def furthest_point_sample_weights_density(xyz: torch.Tensor, weights: torch.Tensor, density: torch.Tensor, npoint: int) -> torch.Tensor:
+    """
+    Uses iterative furthest point sampling to select a set of npoint features that have the largest
+    minimum weighted distance
+    Args:
+        xyz: (B, N, 3), tensor of xyz coordinates
+        weights: (B, N), tensor of point weights, sementic scores
+        density: (B, N), tensor of point weights, density
+        npoint: int, number of points in the sampled set
+    Returns:
+        output: (B, npoint) tensor containing the set
+    """
+    assert xyz.is_contiguous()
+    assert weights.is_contiguous()
+    assert density.is_contiguous()
+
+    B, N, _ = xyz.size()
+    output = torch.cuda.IntTensor(B, npoint)
+    temp = torch.cuda.FloatTensor(B, N).fill_(1e10)
+
+    pointnet2.furthest_point_sampling_weights_density_wrapper(B, N, npoint, xyz, weights, density, temp, output)
+    return output
 
 class GatherOperation(Function):
 

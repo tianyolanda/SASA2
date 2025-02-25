@@ -38,4 +38,10 @@ int furthest_point_sampling_weights_wrapper(int b, int n, int m,
 void furthest_point_sampling_weights_kernel_launcher(int b, int n, int m,
     const float *xyz, const float *weights, float *temp, int *idxs);
 
+int furthest_point_sampling_weights_density_wrapper(int b, int n, int m,
+    at::Tensor xyz_tensor, at::Tensor weights_tensor,at::Tensor density_tensor, at::Tensor temp_tensor, at::Tensor idx_tensor);
+
+void furthest_point_sampling_weights_density_kernel_launcher(int b, int n, int m,
+    const float *xyz, const float *weights, const float *density, float *temp, int *idxs);
+
 #endif

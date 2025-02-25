@@ -20,7 +20,8 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
     m.def("furthest_point_sampling_wrapper", &furthest_point_sampling_wrapper, "furthest_point_sampling_wrapper");
     m.def("furthest_point_sampling_matrix_wrapper", &furthest_point_sampling_matrix_wrapper, "furthest_point_sampling_matrix_wrapper");
     m.def("furthest_point_sampling_weights_wrapper", &furthest_point_sampling_weights_wrapper, "furthest_point_sampling_weights_wrapper");
-    
+    m.def("furthest_point_sampling_weights_density_wrapper", &furthest_point_sampling_weights_density_wrapper, "furthest_point_sampling_weights_density_wrapper");
+
     m.def("three_nn_wrapper", &three_nn_wrapper_fast, "three_nn_wrapper_fast");
     m.def("three_interpolate_wrapper", &three_interpolate_wrapper_fast, "three_interpolate_wrapper_fast");
     m.def("three_interpolate_grad_wrapper", &three_interpolate_grad_wrapper_fast, "three_interpolate_grad_wrapper_fast");
