@@ -137,7 +137,7 @@ MODEL:
                 NMS_TYPE: nms_gpu
                 MULTI_CLASSES_NMS: False
                 NMS_PRE_MAXSIZE: 9000
-                NMS_POST_MAXSIZE: 100
+                NMS_POST_MAXSIZE: 100 #100
                 NMS_THRESH: 0.85
 
         TARGET_CONFIG:

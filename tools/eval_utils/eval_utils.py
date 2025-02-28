@@ -57,10 +57,10 @@ def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, sa
     for i, batch_dict in enumerate(dataloader):
         load_data_to_gpu(batch_dict)
         with torch.no_grad():
-            pred_dicts, ret_dict = model(batch_dict)
+            pred_dicts, ret_dict = model(batch_dict) # ret_dict = recall_dict
         disp_dict = {}
 
-        statistics_info(cfg, ret_dict, metric, disp_dict)
+        statistics_info(cfg, ret_dict, metric, disp_dict) # 修改了metric, disp_dict
         annos = dataset.generate_prediction_dicts(
             batch_dict, pred_dicts, class_names,
             output_path=final_output_dir if save_to_file else None

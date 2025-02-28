@@ -58,17 +58,19 @@ MODEL:
     NAME: PointRCNN
 
     BACKBONE_3D:
-        NAME: PointNet2FSMSG
+        NAME: PointNet2FSMSGwD
         SA_CONFIG:
             NPOINT_LIST: [[4096], [1024], [256], [64]]
             SAMPLE_RANGE_LIST: [[[0, 16384]], [[0, 4096]], [[0, 1024]], [[0, 256]]]
-            SAMPLE_METHOD_LIST: [['d-fps'], ['d-fps'], ['d-fps'], ['d-fps']]
+            SAMPLE_METHOD_LIST: [['d-fps'], ['sden-fps'], ['sden-fps'], ['sden-fps']]
             RADIUS: [[0.1, 0.5], [0.5, 1.0], [1.0, 2.0], [2.0, 4.0]]
             NSAMPLE: [[16, 32], [16, 32], [16, 32], [16, 32]]
             MLPS: [[[16, 16, 32], [32, 32, 64]],
                    [[64, 64, 128], [64, 96, 128]],
                    [[128, 196, 256], [128, 196, 256]],
                    [[256, 256, 512], [256, 384, 512]]]
+            CONFIDENCE_MLPS: [[32], [64], [128], []]
+            WEIGHT_GAMMA: 1.0
             DILATED_RADIUS_GROUP: False
         FP_MLPS: [[128, 128], [256, 256], [512, 512], [512, 512]]
 
@@ -94,6 +96,11 @@ MODEL:
                 'point_cls_weight': 1.0,
                 'point_box_weight': 1.0,
                 'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            }
+            LOSS_SASA_CONFIG: {
+                'set_ignore_flag': True,
+                'extra_width': [1.0, 1.0, 1.0],
+                'layer_weights': [0.001, 0.01, 0.1, 0]
             }
 
     ROI_HEAD:

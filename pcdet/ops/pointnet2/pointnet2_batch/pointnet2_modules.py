@@ -22,8 +22,8 @@ def density_factor_calculation(density, weight):
     '''
     written by tiatia 2025/2/25
     sampling algorithm ranking strategy:
-    ranking = (score ** weight_gamma) * (1 + density_factor ** weight_beta )/2
-    this function aims to calculate the second multiplier(called density_factor): (1 + density_factor ** weight_beta )/2
+    ranking = (score ** weight_gamma) * (1 + density ** weight_beta )/2
+    this function aims to calculate the second multiplier(called density_factor): (1 + density ** weight_beta )/2
     :param density: density of each point (B,1,N)?
     :param weight: weight_beta
     :return: density_factor

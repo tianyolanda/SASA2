@@ -22,6 +22,7 @@ python train.py --cfg_file cfgs/kitti_models/3dssd.yaml
 
 python train.py --cfg_file cfgs/kitti_models/3dssd_sasa.yaml
 
+CUDA_VISIBLE_DEVICES=1 python train.py --cfg_file cfgs/kitti_models/pointrcnn_dsasa.yaml
 
 # 计算网络每层尺寸(没跑明白)
 pip install torchsummary

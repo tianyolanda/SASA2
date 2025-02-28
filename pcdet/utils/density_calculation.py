@@ -5,7 +5,7 @@ import torch
 # 这俩save只能save一帧的内容...
 def tensor_save_to_txt(torchtensor):
     # 打开文件并写入张量内容
-    with open('num_cnt_ball_points_radius1.0_nsample500.txt', 'w') as f:
+    with open('num_cnt_ball_points_radius2.0_nsample500.txt', 'w') as f:
         for row in torchtensor:
             # 将每一行转换为字符串并写入文件
             row_str = ' '.join([f'{x:.2f}' for x in row.tolist()])
@@ -78,8 +78,8 @@ def cnt_ball_points(radius=1, nsample=500, points=''):
         time2 = time.time()
         # record
         # vis3d_pyvista(points_torch, idx_cnt)
-        tensor_save_to_txt(idx_cnt)
-        float_save_to_txt(time2-time1)
+        # tensor_save_to_txt(idx_cnt)
+        # float_save_to_txt(time2-time1)
         if i == 0:
             idx_cnt_batch = idx_cnt
         else:

@@ -318,6 +318,7 @@ class Detector3DTemplate(nn.Module):
 
     def load_params_from_file(self, filename, logger, to_cpu=False):
         if not os.path.isfile(filename):
+            print(filename)
             raise FileNotFoundError
 
         logger.info('==> Loading parameters from checkpoint %s to %s' % (filename, 'CPU' if to_cpu else 'GPU'))
