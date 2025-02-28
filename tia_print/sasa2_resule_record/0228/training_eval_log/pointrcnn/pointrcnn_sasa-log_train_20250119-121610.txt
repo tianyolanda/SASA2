@@ -1,0 +1,876 @@
+2025-01-19 12:16:10,729   INFO  **********************Start logging**********************
+2025-01-19 12:16:10,729   INFO  CUDA_VISIBLE_DEVICES=ALL
+2025-01-19 12:16:10,729   INFO  cfg_file         cfgs/kitti_models/pointrcnn_sasa.yaml
+2025-01-19 12:16:10,729   INFO  batch_size       2
+2025-01-19 12:16:10,729   INFO  epochs           80
+2025-01-19 12:16:10,729   INFO  workers          8
+2025-01-19 12:16:10,729   INFO  extra_tag        default
+2025-01-19 12:16:10,729   INFO  ckpt             None
+2025-01-19 12:16:10,729   INFO  pretrained_model None
+2025-01-19 12:16:10,729   INFO  launcher         none
+2025-01-19 12:16:10,729   INFO  tcp_port         18888
+2025-01-19 12:16:10,729   INFO  sync_bn          False
+2025-01-19 12:16:10,729   INFO  fix_random_seed  666
+2025-01-19 12:16:10,729   INFO  ckpt_save_interval 1
+2025-01-19 12:16:10,729   INFO  local_rank       0
+2025-01-19 12:16:10,729   INFO  max_ckpt_save_num 10
+2025-01-19 12:16:10,729   INFO  merge_all_iters_to_one_epoch False
+2025-01-19 12:16:10,729   INFO  set_cfgs         None
+2025-01-19 12:16:10,729   INFO  max_waiting_mins 0
+2025-01-19 12:16:10,729   INFO  start_epoch      0
+2025-01-19 12:16:10,729   INFO  save_to_file     False
+2025-01-19 12:16:10,729   INFO  cfg.ROOT_DIR: /home/ubuntu/codes/2025codes/SASA
+2025-01-19 12:16:10,729   INFO  cfg.LOCAL_RANK: 0
+2025-01-19 12:16:10,729   INFO  cfg.CLASS_NAMES: ['Car']
+2025-01-19 12:16:10,729   INFO  
+cfg.DATA_CONFIG = edict()
+2025-01-19 12:16:10,729   INFO  cfg.DATA_CONFIG.DATASET: KittiDataset
+2025-01-19 12:16:10,729   INFO  cfg.DATA_CONFIG.DATA_PATH: ../data/kitti
+2025-01-19 12:16:10,729   INFO  cfg.DATA_CONFIG.POINT_CLOUD_RANGE: [0, -40, -3, 70.4, 40, 1]
+2025-01-19 12:16:10,729   INFO  
+cfg.DATA_CONFIG.DATA_SPLIT = edict()
+2025-01-19 12:16:10,729   INFO  cfg.DATA_CONFIG.DATA_SPLIT.train: train
+2025-01-19 12:16:10,729   INFO  cfg.DATA_CONFIG.DATA_SPLIT.test: val
+2025-01-19 12:16:10,729   INFO  
+cfg.DATA_CONFIG.INFO_PATH = edict()
+2025-01-19 12:16:10,729   INFO  cfg.DATA_CONFIG.INFO_PATH.train: ['kitti_infos_train.pkl']
+2025-01-19 12:16:10,730   INFO  cfg.DATA_CONFIG.INFO_PATH.test: ['kitti_infos_val.pkl']
+2025-01-19 12:16:10,730   INFO  cfg.DATA_CONFIG.FOV_POINTS_ONLY: True
+2025-01-19 12:16:10,730   INFO  
+cfg.DATA_CONFIG.DATA_AUGMENTOR = edict()
+2025-01-19 12:16:10,730   INFO  cfg.DATA_CONFIG.DATA_AUGMENTOR.DISABLE_AUG_LIST: ['placeholder']
+2025-01-19 12:16:10,730   INFO  cfg.DATA_CONFIG.DATA_AUGMENTOR.AUG_CONFIG_LIST: [{'NAME': 'gt_sampling', 'USE_ROAD_PLANE': True, 'DB_INFO_PATH': ['kitti_dbinfos_train.pkl'], 'PREPARE': {'filter_by_min_points': ['Car:5'], 'filter_by_difficulty': [-1]}, 'SAMPLE_GROUPS': ['Car: 15'], 'NUM_POINT_FEATURES': 4, 'DATABASE_WITH_FAKELIDAR': False, 'REMOVE_EXTRA_WIDTH': [0.0, 0.0, 0.0], 'LIMIT_WHOLE_SCENE': False}, {'NAME': 'random_world_flip', 'ENABLE_PROB': 0.5, 'ALONG_AXIS_LIST': ['x']}, {'NAME': 'random_box_noise', 'ENABLE_PROB': 0.5, 'LOC_NOISE': [1.0, 1.0, 0.0], 'SCALE_RANGE': [1.0, 1.0], 'ROTATION_RANGE': [-1.04719755, 1.04719755]}, {'NAME': 'random_world_rotation', 'ENABLE_PROB': 0.5, 'WORLD_ROT_ANGLE': [-0.78539816, 0.78539816]}, {'NAME': 'random_world_scaling', 'ENABLE_PROB': 0.5, 'WORLD_SCALE_RANGE': [0.9, 1.1]}]
+2025-01-19 12:16:10,730   INFO  
+cfg.DATA_CONFIG.POINT_FEATURE_ENCODING = edict()
+2025-01-19 12:16:10,730   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.encoding_type: absolute_coordinates_encoding
+2025-01-19 12:16:10,730   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.used_feature_list: ['x', 'y', 'z', 'intensity']
+2025-01-19 12:16:10,730   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.src_feature_list: ['x', 'y', 'z', 'intensity']
+2025-01-19 12:16:10,730   INFO  cfg.DATA_CONFIG.DATA_PROCESSOR: [{'NAME': 'mask_points_and_boxes_outside_range', 'REMOVE_OUTSIDE_BOXES': True}, {'NAME': 'sample_points', 'NUM_POINTS': {'train': 16384, 'test': 16384}}, {'NAME': 'shuffle_points', 'SHUFFLE_ENABLED': {'train': True, 'test': False}}]
+2025-01-19 12:16:10,730   INFO  cfg.DATA_CONFIG._BASE_CONFIG_: cfgs/dataset_configs/kitti_dataset.yaml
+2025-01-19 12:16:10,730   INFO  
+cfg.MODEL = edict()
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.NAME: PointRCNN
+2025-01-19 12:16:10,730   INFO  
+cfg.MODEL.BACKBONE_3D = edict()
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.BACKBONE_3D.NAME: PointNet2FSMSG
+2025-01-19 12:16:10,730   INFO  
+cfg.MODEL.BACKBONE_3D.SA_CONFIG = edict()
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.NPOINT_LIST: [[4096], [1024], [256], [64]]
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.SAMPLE_RANGE_LIST: [[[0, 16384]], [[0, 4096]], [[0, 1024]], [[0, 256]]]
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.SAMPLE_METHOD_LIST: [['d-fps'], ['s-fps'], ['s-fps'], ['s-fps']]
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.RADIUS: [[0.1, 0.5], [0.5, 1.0], [1.0, 2.0], [2.0, 4.0]]
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.NSAMPLE: [[16, 32], [16, 32], [16, 32], [16, 32]]
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.MLPS: [[[16, 16, 32], [32, 32, 64]], [[64, 64, 128], [64, 96, 128]], [[128, 196, 256], [128, 196, 256]], [[256, 256, 512], [256, 384, 512]]]
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.CONFIDENCE_MLPS: [[32], [64], [128], []]
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.WEIGHT_GAMMA: 1.0
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.DILATED_RADIUS_GROUP: False
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.BACKBONE_3D.FP_MLPS: [[128, 128], [256, 256], [512, 512], [512, 512]]
+2025-01-19 12:16:10,730   INFO  
+cfg.MODEL.POINT_HEAD = edict()
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.POINT_HEAD.NAME: PointHeadBox
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.POINT_HEAD.CLS_FC: [256, 256]
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.POINT_HEAD.REG_FC: [256, 256]
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.POINT_HEAD.CLASS_AGNOSTIC: False
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.POINT_HEAD.USE_POINT_FEATURES_BEFORE_FUSION: False
+2025-01-19 12:16:10,730   INFO  
+cfg.MODEL.POINT_HEAD.TARGET_CONFIG = edict()
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.POINT_HEAD.TARGET_CONFIG.GT_EXTRA_WIDTH: [0.2, 0.2, 0.2]
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.POINT_HEAD.TARGET_CONFIG.BOX_CODER: PointResidualCoder
+2025-01-19 12:16:10,730   INFO  
+cfg.MODEL.POINT_HEAD.TARGET_CONFIG.BOX_CODER_CONFIG = edict()
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.POINT_HEAD.TARGET_CONFIG.BOX_CODER_CONFIG.use_mean_size: True
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.POINT_HEAD.TARGET_CONFIG.BOX_CODER_CONFIG.mean_size: [[3.9, 1.6, 1.56]]
+2025-01-19 12:16:10,730   INFO  
+cfg.MODEL.POINT_HEAD.LOSS_CONFIG = edict()
+2025-01-19 12:16:10,730   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_REG: WeightedSmoothL1Loss
+2025-01-19 12:16:10,731   INFO  
+cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS = edict()
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.point_cls_weight: 1.0
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.point_box_weight: 1.0
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.code_weights: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+2025-01-19 12:16:10,731   INFO  
+cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_SASA_CONFIG = edict()
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_SASA_CONFIG.set_ignore_flag: True
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_SASA_CONFIG.extra_width: [1.0, 1.0, 1.0]
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_SASA_CONFIG.layer_weights: [0.001, 0.01, 0.1, 0]
+2025-01-19 12:16:10,731   INFO  
+cfg.MODEL.ROI_HEAD = edict()
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.NAME: PointRCNNHead
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.CLASS_AGNOSTIC: True
+2025-01-19 12:16:10,731   INFO  
+cfg.MODEL.ROI_HEAD.ROI_POINT_POOL = edict()
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.ROI_POINT_POOL.POOL_EXTRA_WIDTH: [0.0, 0.0, 0.0]
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.ROI_POINT_POOL.NUM_SAMPLED_POINTS: 512
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.ROI_POINT_POOL.DEPTH_NORMALIZER: 70.0
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.XYZ_UP_LAYER: [128, 128]
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.CLS_FC: [256, 256]
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.REG_FC: [256, 256]
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.DP_RATIO: 0.0
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.USE_BN: False
+2025-01-19 12:16:10,731   INFO  
+cfg.MODEL.ROI_HEAD.SA_CONFIG = edict()
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.SA_CONFIG.NPOINTS: [128, 32, -1]
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.SA_CONFIG.RADIUS: [0.2, 0.4, 100]
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.SA_CONFIG.NSAMPLE: [16, 16, 16]
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.SA_CONFIG.MLPS: [[128, 128, 128], [128, 128, 256], [256, 256, 512]]
+2025-01-19 12:16:10,731   INFO  
+cfg.MODEL.ROI_HEAD.NMS_CONFIG = edict()
+2025-01-19 12:16:10,731   INFO  
+cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN = edict()
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_TYPE: nms_gpu
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.MULTI_CLASSES_NMS: False
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_PRE_MAXSIZE: 9000
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_POST_MAXSIZE: 512
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_THRESH: 0.8
+2025-01-19 12:16:10,731   INFO  
+cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST = edict()
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_TYPE: nms_gpu
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.MULTI_CLASSES_NMS: False
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_PRE_MAXSIZE: 9000
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_POST_MAXSIZE: 100
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_THRESH: 0.85
+2025-01-19 12:16:10,731   INFO  
+cfg.MODEL.ROI_HEAD.TARGET_CONFIG = edict()
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.BOX_CODER: ResidualCoder
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.ROI_PER_IMAGE: 128
+2025-01-19 12:16:10,731   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.FG_RATIO: 0.5
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.SAMPLE_ROI_BY_EACH_CLASS: True
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_SCORE_TYPE: roi_iou
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_FG_THRESH: 0.7
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_BG_THRESH: 0.25
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_BG_THRESH_LO: 0.1
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.HARD_BG_RATIO: 0.8
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.REG_FG_THRESH: 0.55
+2025-01-19 12:16:10,732   INFO  
+cfg.MODEL.ROI_HEAD.LOSS_CONFIG = edict()
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.CLS_LOSS: BinaryCrossEntropy
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.REG_LOSS: smooth-l1
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.CORNER_LOSS_REGULARIZATION: True
+2025-01-19 12:16:10,732   INFO  
+cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS = edict()
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_cls_weight: 1.0
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_reg_weight: 1.0
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_corner_weight: 1.0
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.code_weights: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+2025-01-19 12:16:10,732   INFO  
+cfg.MODEL.POST_PROCESSING = edict()
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.POST_PROCESSING.RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.POST_PROCESSING.SCORE_THRESH: 0.1
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.POST_PROCESSING.OUTPUT_RAW_SCORE: False
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.POST_PROCESSING.EVAL_METRIC: kitti
+2025-01-19 12:16:10,732   INFO  
+cfg.MODEL.POST_PROCESSING.NMS_CONFIG = edict()
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.MULTI_CLASSES_NMS: False
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_TYPE: nms_gpu
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_THRESH: 0.1
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_PRE_MAXSIZE: 4096
+2025-01-19 12:16:10,732   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_POST_MAXSIZE: 500
+2025-01-19 12:16:10,732   INFO  
+cfg.OPTIMIZATION = edict()
+2025-01-19 12:16:10,732   INFO  cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU: 2
+2025-01-19 12:16:10,732   INFO  cfg.OPTIMIZATION.NUM_EPOCHS: 80
+2025-01-19 12:16:10,732   INFO  cfg.OPTIMIZATION.OPTIMIZER: adam_onecycle
+2025-01-19 12:16:10,732   INFO  cfg.OPTIMIZATION.LR: 0.005
+2025-01-19 12:16:10,732   INFO  cfg.OPTIMIZATION.WEIGHT_DECAY: 0.01
+2025-01-19 12:16:10,732   INFO  cfg.OPTIMIZATION.MOMENTUM: 0.9
+2025-01-19 12:16:10,732   INFO  cfg.OPTIMIZATION.MOMS: [0.95, 0.85]
+2025-01-19 12:16:10,732   INFO  cfg.OPTIMIZATION.PCT_START: 0.4
+2025-01-19 12:16:10,732   INFO  cfg.OPTIMIZATION.DIV_FACTOR: 10
+2025-01-19 12:16:10,732   INFO  cfg.OPTIMIZATION.DECAY_STEP_LIST: [35, 45]
+2025-01-19 12:16:10,732   INFO  cfg.OPTIMIZATION.LR_DECAY: 0.1
+2025-01-19 12:16:10,732   INFO  cfg.OPTIMIZATION.LR_CLIP: 1e-07
+2025-01-19 12:16:10,732   INFO  cfg.OPTIMIZATION.LR_WARMUP: False
+2025-01-19 12:16:10,732   INFO  cfg.OPTIMIZATION.WARMUP_EPOCH: 1
+2025-01-19 12:16:10,732   INFO  cfg.OPTIMIZATION.GRAD_NORM_CLIP: 10
+2025-01-19 12:16:10,733   INFO  cfg.TAG: pointrcnn_sasa
+2025-01-19 12:16:10,733   INFO  cfg.EXP_GROUP_PATH: kitti_models
+2025-01-19 12:16:10,897   INFO  Database filter by min points Car: 14357 => 13532
+2025-01-19 12:16:10,912   INFO  Database filter by difficulty Car: 13532 => 10759
+2025-01-19 12:16:10,918   INFO  Loading KITTI dataset
+2025-01-19 12:16:11,005   INFO  Total samples for KITTI dataset: 3712
+2025-01-19 12:16:14,186   INFO  PointRCNN(
+  (vfe): None
+  (backbone_3d): PointNet2FSMSG(
+    (SA_modules): ModuleList(
+      (0): PointnetSAModuleFSMSG(
+        (groupers): ModuleList(
+          (0): QueryAndGroup()
+          (1): QueryAndGroup()
+        )
+        (mlps): ModuleList(
+          (0): Sequential(
+            (0): Conv2d(4, 16, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(16, 16, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(16, 32, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+          (1): Sequential(
+            (0): Conv2d(4, 32, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(32, 32, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(32, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+        )
+        (confidence_mlp): Sequential(
+          (0): Conv1d(96, 32, kernel_size=(1,), stride=(1,), bias=False)
+          (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+          (3): Conv1d(32, 1, kernel_size=(1,), stride=(1,))
+        )
+      )
+      (1): PointnetSAModuleFSMSG(
+        (groupers): ModuleList(
+          (0): QueryAndGroup()
+          (1): QueryAndGroup()
+        )
+        (mlps): ModuleList(
+          (0): Sequential(
+            (0): Conv2d(99, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(64, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+          (1): Sequential(
+            (0): Conv2d(99, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(64, 96, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(96, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(96, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+        )
+        (confidence_mlp): Sequential(
+          (0): Conv1d(256, 64, kernel_size=(1,), stride=(1,), bias=False)
+          (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+          (3): Conv1d(64, 1, kernel_size=(1,), stride=(1,))
+        )
+      )
+      (2): PointnetSAModuleFSMSG(
+        (groupers): ModuleList(
+          (0): QueryAndGroup()
+          (1): QueryAndGroup()
+        )
+        (mlps): ModuleList(
+          (0): Sequential(
+            (0): Conv2d(259, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(128, 196, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(196, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(196, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+          (1): Sequential(
+            (0): Conv2d(259, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(128, 196, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(196, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(196, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+        )
+        (confidence_mlp): Sequential(
+          (0): Conv1d(512, 128, kernel_size=(1,), stride=(1,), bias=False)
+          (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+          (3): Conv1d(128, 1, kernel_size=(1,), stride=(1,))
+        )
+      )
+      (3): PointnetSAModuleFSMSG(
+        (groupers): ModuleList(
+          (0): QueryAndGroup()
+          (1): QueryAndGroup()
+        )
+        (mlps): ModuleList(
+          (0): Sequential(
+            (0): Conv2d(515, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(256, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+          (1): Sequential(
+            (0): Conv2d(515, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(256, 384, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(384, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(384, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+        )
+      )
+    )
+    (FP_modules): ModuleList(
+      (0): PointnetFPModule(
+        (mlp): Sequential(
+          (0): Conv2d(257, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+          (3): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (4): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (5): ReLU()
+        )
+      )
+      (1): PointnetFPModule(
+        (mlp): Sequential(
+          (0): Conv2d(608, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+          (3): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (4): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (5): ReLU()
+        )
+      )
+      (2): PointnetFPModule(
+        (mlp): Sequential(
+          (0): Conv2d(768, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+          (3): Conv2d(512, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (4): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (5): ReLU()
+        )
+      )
+      (3): PointnetFPModule(
+        (mlp): Sequential(
+          (0): Conv2d(1536, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+          (3): Conv2d(512, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (4): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (5): ReLU()
+        )
+      )
+    )
+  )
+  (map_to_bev_module): None
+  (pfe): None
+  (backbone_2d): None
+  (dense_head): None
+  (point_head): PointHeadBox(
+    (cls_loss_func): SigmoidFocalClassificationLoss()
+    (reg_loss_func): WeightedSmoothL1Loss()
+    (cls_layers): Sequential(
+      (0): Linear(in_features=128, out_features=256, bias=False)
+      (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU()
+      (3): Linear(in_features=256, out_features=256, bias=False)
+      (4): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (5): ReLU()
+      (6): Linear(in_features=256, out_features=1, bias=True)
+    )
+    (box_layers): Sequential(
+      (0): Linear(in_features=128, out_features=256, bias=False)
+      (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU()
+      (3): Linear(in_features=256, out_features=256, bias=False)
+      (4): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (5): ReLU()
+      (6): Linear(in_features=256, out_features=8, bias=True)
+    )
+    (loss_point_sasa): PointSASALoss(
+      (loss_func): WeightedBinaryCrossEntropyLoss()
+    )
+  )
+  (roi_head): PointRCNNHead(
+    (proposal_target_layer): ProposalTargetLayer()
+    (reg_loss_func): WeightedSmoothL1Loss()
+    (SA_modules): ModuleList(
+      (0): PointnetSAModule(
+        (groupers): ModuleList(
+          (0): QueryAndGroup()
+        )
+        (mlps): ModuleList(
+          (0): Sequential(
+            (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+        )
+      )
+      (1): PointnetSAModule(
+        (groupers): ModuleList(
+          (0): QueryAndGroup()
+        )
+        (mlps): ModuleList(
+          (0): Sequential(
+            (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(128, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+        )
+      )
+      (2): PointnetSAModule(
+        (groupers): ModuleList(
+          (0): GroupAll()
+        )
+        (mlps): ModuleList(
+          (0): Sequential(
+            (0): Conv2d(259, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(256, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+        )
+      )
+    )
+    (xyz_up_layer): Sequential(
+      (0): Conv2d(5, 128, kernel_size=(1, 1), stride=(1, 1))
+      (1): ReLU()
+      (2): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1))
+      (3): ReLU()
+    )
+    (merge_down_layer): Sequential(
+      (0): Conv2d(256, 128, kernel_size=(1, 1), stride=(1, 1))
+      (1): ReLU()
+    )
+    (cls_layers): Sequential(
+      (0): Conv1d(512, 256, kernel_size=(1,), stride=(1,), bias=False)
+      (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU()
+      (3): Dropout(p=0.0, inplace=False)
+      (4): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+      (5): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (6): ReLU()
+      (7): Conv1d(256, 1, kernel_size=(1,), stride=(1,))
+    )
+    (reg_layers): Sequential(
+      (0): Conv1d(512, 256, kernel_size=(1,), stride=(1,), bias=False)
+      (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU()
+      (3): Dropout(p=0.0, inplace=False)
+      (4): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+      (5): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (6): ReLU()
+      (7): Conv1d(256, 7, kernel_size=(1,), stride=(1,))
+    )
+    (roipoint_pool3d_layer): RoIPointPool3d()
+  )
+)
+2025-01-19 12:16:14,188   INFO  **********************Start training kitti_models/pointrcnn_sasa(default)**********************
+2025-01-20 23:54:44,271   INFO  **********************End training kitti_models/pointrcnn_sasa(default)**********************
+
+
+
+2025-01-20 23:54:44,272   INFO  **********************Start evaluation kitti_models/pointrcnn_sasa(default)**********************
+2025-01-20 23:54:44,273   INFO  Loading KITTI dataset
+2025-01-20 23:54:44,369   INFO  Total samples for KITTI dataset: 3769
+2025-01-20 23:54:44,371   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/ckpt/checkpoint_epoch_71.pth to GPU
+2025-01-20 23:54:44,437   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60+pye337d7c
+2025-01-20 23:54:45,003   INFO  ==> Done (loaded 333/333)
+2025-01-20 23:54:45,006   INFO  *************** EPOCH 71 EVALUATION *****************
+2025-01-21 00:01:10,833   INFO  *************** Performance of EPOCH 71 *****************
+2025-01-21 00:01:10,833   INFO  Generate label finished(sec_per_example: 0.1024 second).
+2025-01-21 00:01:10,833   INFO  recall_roi_0.3: 0.000000
+2025-01-21 00:01:10,833   INFO  recall_rcnn_0.3: 0.000000
+2025-01-21 00:01:10,833   INFO  recall_roi_0.5: 0.000000
+2025-01-21 00:01:10,833   INFO  recall_rcnn_0.5: 0.000000
+2025-01-21 00:01:10,833   INFO  recall_roi_0.7: 0.000000
+2025-01-21 00:01:10,833   INFO  recall_rcnn_0.7: 0.000000
+2025-01-21 00:01:10,835   INFO  Average predicted number of objects(3769 samples): 8.027
+2025-01-21 00:01:30,759   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:90.6333, 89.4251, 89.1733
+bev  AP:90.0968, 87.9786, 87.4148
+3d   AP:89.3159, 79.3177, 78.8959
+aos  AP:90.63, 89.37, 89.04
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:95.9274, 94.0105, 91.9535
+bev  AP:92.9131, 88.6248, 88.4839
+3d   AP:91.6258, 82.8302, 80.6680
+aos  AP:95.92, 93.92, 91.81
+Car AP@0.70, 0.50, 0.50:
+bbox AP:90.6333, 89.4251, 89.1733
+bev  AP:90.6099, 89.4822, 89.2951
+3d   AP:90.6099, 89.4610, 89.2699
+aos  AP:90.63, 89.37, 89.04
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:95.9274, 94.0105, 91.9535
+bev  AP:95.9345, 94.2464, 94.0441
+3d   AP:95.9194, 94.1963, 93.6416
+aos  AP:95.92, 93.92, 91.81
+
+2025-01-21 00:01:30,767   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/eval/eval_with_train/epoch_71/val
+2025-01-21 00:01:30,767   INFO  ****************Evaluation done.*****************
+2025-01-21 00:01:30,788   INFO  Epoch 71 has been evaluated
+2025-01-21 00:01:30,789   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/ckpt/checkpoint_epoch_72.pth to GPU
+2025-01-21 00:01:30,855   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60+pye337d7c
+2025-01-21 00:01:31,447   INFO  ==> Done (loaded 333/333)
+2025-01-21 00:01:31,451   INFO  *************** EPOCH 72 EVALUATION *****************
+2025-01-21 00:07:58,811   INFO  *************** Performance of EPOCH 72 *****************
+2025-01-21 00:07:58,811   INFO  Generate label finished(sec_per_example: 0.1028 second).
+2025-01-21 00:07:58,811   INFO  recall_roi_0.3: 0.000000
+2025-01-21 00:07:58,811   INFO  recall_rcnn_0.3: 0.000000
+2025-01-21 00:07:58,811   INFO  recall_roi_0.5: 0.000000
+2025-01-21 00:07:58,812   INFO  recall_rcnn_0.5: 0.000000
+2025-01-21 00:07:58,812   INFO  recall_roi_0.7: 0.000000
+2025-01-21 00:07:58,812   INFO  recall_rcnn_0.7: 0.000000
+2025-01-21 00:07:58,814   INFO  Average predicted number of objects(3769 samples): 7.660
+2025-01-21 00:08:05,167   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:94.9564, 89.3749, 89.2176
+bev  AP:90.2743, 87.8576, 87.6301
+3d   AP:89.3868, 78.9716, 78.6586
+aos  AP:94.95, 89.31, 89.10
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:97.7454, 94.1662, 92.0237
+bev  AP:94.1643, 90.2606, 88.4428
+3d   AP:92.1594, 82.6139, 80.5392
+aos  AP:97.74, 94.07, 91.89
+Car AP@0.70, 0.50, 0.50:
+bbox AP:94.9564, 89.3749, 89.2176
+bev  AP:95.0055, 93.3280, 89.2622
+3d   AP:94.9643, 93.2776, 89.2406
+aos  AP:94.95, 89.31, 89.10
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:97.7454, 94.1662, 92.0237
+bev  AP:97.8405, 95.7645, 94.1599
+3d   AP:97.7531, 95.2867, 94.0923
+aos  AP:97.74, 94.07, 91.89
+
+2025-01-21 00:08:05,168   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/eval/eval_with_train/epoch_72/val
+2025-01-21 00:08:05,168   INFO  ****************Evaluation done.*****************
+2025-01-21 00:08:05,188   INFO  Epoch 72 has been evaluated
+2025-01-21 00:08:05,189   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/ckpt/checkpoint_epoch_73.pth to GPU
+2025-01-21 00:08:05,258   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60+pye337d7c
+2025-01-21 00:08:05,866   INFO  ==> Done (loaded 333/333)
+2025-01-21 00:08:05,870   INFO  *************** EPOCH 73 EVALUATION *****************
+2025-01-21 00:14:33,641   INFO  *************** Performance of EPOCH 73 *****************
+2025-01-21 00:14:33,641   INFO  Generate label finished(sec_per_example: 0.1029 second).
+2025-01-21 00:14:33,642   INFO  recall_roi_0.3: 0.000000
+2025-01-21 00:14:33,642   INFO  recall_rcnn_0.3: 0.000000
+2025-01-21 00:14:33,642   INFO  recall_roi_0.5: 0.000000
+2025-01-21 00:14:33,642   INFO  recall_rcnn_0.5: 0.000000
+2025-01-21 00:14:33,642   INFO  recall_roi_0.7: 0.000000
+2025-01-21 00:14:33,642   INFO  recall_rcnn_0.7: 0.000000
+2025-01-21 00:14:33,644   INFO  Average predicted number of objects(3769 samples): 8.073
+2025-01-21 00:14:39,945   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:90.6326, 89.4169, 89.1075
+bev  AP:90.2092, 87.6749, 86.7203
+3d   AP:89.1990, 78.9854, 78.6389
+aos  AP:90.62, 89.36, 89.01
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:95.8063, 93.8732, 91.8595
+bev  AP:92.8516, 88.3503, 88.0781
+3d   AP:91.2854, 82.3679, 80.2498
+aos  AP:95.80, 93.80, 91.74
+Car AP@0.70, 0.50, 0.50:
+bbox AP:90.6326, 89.4169, 89.1075
+bev  AP:90.6132, 89.4162, 89.1914
+3d   AP:90.6132, 89.3941, 89.1583
+aos  AP:90.62, 89.36, 89.01
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:95.8063, 93.8732, 91.8595
+bev  AP:95.8008, 94.1018, 93.8427
+3d   AP:95.7889, 94.0447, 93.5023
+aos  AP:95.80, 93.80, 91.74
+
+2025-01-21 00:14:39,945   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/eval/eval_with_train/epoch_73/val
+2025-01-21 00:14:39,945   INFO  ****************Evaluation done.*****************
+2025-01-21 00:14:39,965   INFO  Epoch 73 has been evaluated
+2025-01-21 00:14:39,966   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/ckpt/checkpoint_epoch_74.pth to GPU
+2025-01-21 00:14:40,036   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60+pye337d7c
+2025-01-21 00:14:40,651   INFO  ==> Done (loaded 333/333)
+2025-01-21 00:14:40,655   INFO  *************** EPOCH 74 EVALUATION *****************
+2025-01-21 00:21:09,489   INFO  *************** Performance of EPOCH 74 *****************
+2025-01-21 00:21:09,489   INFO  Generate label finished(sec_per_example: 0.1032 second).
+2025-01-21 00:21:09,489   INFO  recall_roi_0.3: 0.000000
+2025-01-21 00:21:09,489   INFO  recall_rcnn_0.3: 0.000000
+2025-01-21 00:21:09,489   INFO  recall_roi_0.5: 0.000000
+2025-01-21 00:21:09,489   INFO  recall_rcnn_0.5: 0.000000
+2025-01-21 00:21:09,489   INFO  recall_roi_0.7: 0.000000
+2025-01-21 00:21:09,489   INFO  recall_rcnn_0.7: 0.000000
+2025-01-21 00:21:09,492   INFO  Average predicted number of objects(3769 samples): 7.174
+2025-01-21 00:21:15,951   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:90.6845, 89.4571, 89.1534
+bev  AP:90.1678, 87.9038, 87.3261
+3d   AP:89.2356, 79.1441, 78.7888
+aos  AP:90.68, 89.40, 89.05
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:95.9926, 94.1198, 92.0459
+bev  AP:92.9454, 89.7815, 88.4435
+3d   AP:91.8114, 82.7273, 81.9372
+aos  AP:95.98, 94.05, 91.92
+Car AP@0.70, 0.50, 0.50:
+bbox AP:90.6845, 89.4571, 89.1534
+bev  AP:90.6393, 89.4405, 89.2131
+3d   AP:90.6393, 89.4190, 89.1774
+aos  AP:90.68, 89.40, 89.05
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:95.9926, 94.1198, 92.0459
+bev  AP:95.9599, 94.3050, 94.0623
+3d   AP:95.9456, 94.2503, 93.6911
+aos  AP:95.98, 94.05, 91.92
+
+2025-01-21 00:21:15,952   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/eval/eval_with_train/epoch_74/val
+2025-01-21 00:21:15,952   INFO  ****************Evaluation done.*****************
+2025-01-21 00:21:15,971   INFO  Epoch 74 has been evaluated
+2025-01-21 00:21:15,972   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/ckpt/checkpoint_epoch_75.pth to GPU
+2025-01-21 00:21:16,041   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60+pye337d7c
+2025-01-21 00:21:16,678   INFO  ==> Done (loaded 333/333)
+2025-01-21 00:21:16,681   INFO  *************** EPOCH 75 EVALUATION *****************
+2025-01-21 00:27:44,538   INFO  *************** Performance of EPOCH 75 *****************
+2025-01-21 00:27:44,538   INFO  Generate label finished(sec_per_example: 0.1029 second).
+2025-01-21 00:27:44,539   INFO  recall_roi_0.3: 0.000000
+2025-01-21 00:27:44,539   INFO  recall_rcnn_0.3: 0.000000
+2025-01-21 00:27:44,539   INFO  recall_roi_0.5: 0.000000
+2025-01-21 00:27:44,539   INFO  recall_rcnn_0.5: 0.000000
+2025-01-21 00:27:44,539   INFO  recall_roi_0.7: 0.000000
+2025-01-21 00:27:44,539   INFO  recall_rcnn_0.7: 0.000000
+2025-01-21 00:27:44,542   INFO  Average predicted number of objects(3769 samples): 7.097
+2025-01-21 00:27:51,729   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:90.6223, 89.4057, 89.1108
+bev  AP:90.0131, 87.7881, 87.3191
+3d   AP:89.0383, 78.9912, 78.6181
+aos  AP:90.62, 89.34, 89.00
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:96.2278, 94.1459, 92.0172
+bev  AP:93.2445, 88.5061, 88.3752
+3d   AP:91.9928, 82.6296, 80.3693
+aos  AP:96.22, 94.05, 91.89
+Car AP@0.70, 0.50, 0.50:
+bbox AP:90.6223, 89.4057, 89.1108
+bev  AP:90.5876, 89.4248, 89.2198
+3d   AP:90.5876, 89.4062, 89.1939
+aos  AP:90.62, 89.34, 89.00
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:96.2278, 94.1459, 92.0172
+bev  AP:96.2196, 94.3300, 94.1443
+3d   AP:96.3545, 94.2894, 94.0366
+aos  AP:96.22, 94.05, 91.89
+
+2025-01-21 00:27:51,730   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/eval/eval_with_train/epoch_75/val
+2025-01-21 00:27:51,730   INFO  ****************Evaluation done.*****************
+2025-01-21 00:27:51,749   INFO  Epoch 75 has been evaluated
+2025-01-21 00:27:51,750   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/ckpt/checkpoint_epoch_76.pth to GPU
+2025-01-21 00:27:51,823   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60+pye337d7c
+2025-01-21 00:27:52,512   INFO  ==> Done (loaded 333/333)
+2025-01-21 00:27:52,517   INFO  *************** EPOCH 76 EVALUATION *****************
+2025-01-21 00:34:20,278   INFO  *************** Performance of EPOCH 76 *****************
+2025-01-21 00:34:20,278   INFO  Generate label finished(sec_per_example: 0.1029 second).
+2025-01-21 00:34:20,278   INFO  recall_roi_0.3: 0.000000
+2025-01-21 00:34:20,278   INFO  recall_rcnn_0.3: 0.000000
+2025-01-21 00:34:20,278   INFO  recall_roi_0.5: 0.000000
+2025-01-21 00:34:20,278   INFO  recall_rcnn_0.5: 0.000000
+2025-01-21 00:34:20,278   INFO  recall_roi_0.7: 0.000000
+2025-01-21 00:34:20,278   INFO  recall_rcnn_0.7: 0.000000
+2025-01-21 00:34:20,280   INFO  Average predicted number of objects(3769 samples): 7.472
+2025-01-21 00:34:26,525   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:90.6124, 89.4446, 89.1893
+bev  AP:90.1272, 87.8900, 87.5078
+3d   AP:88.9207, 78.8675, 78.5050
+aos  AP:90.61, 89.40, 89.10
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:96.3267, 94.1980, 92.0928
+bev  AP:93.2963, 88.7317, 88.5667
+3d   AP:91.8101, 82.6813, 80.3086
+aos  AP:96.32, 94.13, 91.99
+Car AP@0.70, 0.50, 0.50:
+bbox AP:90.6124, 89.4446, 89.1893
+bev  AP:90.6046, 89.4644, 89.2599
+3d   AP:90.6046, 89.4546, 89.2323
+aos  AP:90.61, 89.40, 89.10
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:96.3267, 94.1980, 92.0928
+bev  AP:96.3406, 94.4658, 94.2683
+3d   AP:96.3255, 94.4355, 94.1303
+aos  AP:96.32, 94.13, 91.99
+
+2025-01-21 00:34:26,526   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/eval/eval_with_train/epoch_76/val
+2025-01-21 00:34:26,526   INFO  ****************Evaluation done.*****************
+2025-01-21 00:34:26,546   INFO  Epoch 76 has been evaluated
+2025-01-21 00:34:26,548   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/ckpt/checkpoint_epoch_77.pth to GPU
+2025-01-21 00:34:26,621   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60+pye337d7c
+2025-01-21 00:34:27,238   INFO  ==> Done (loaded 333/333)
+2025-01-21 00:34:27,242   INFO  *************** EPOCH 77 EVALUATION *****************
+2025-01-21 00:40:55,503   INFO  *************** Performance of EPOCH 77 *****************
+2025-01-21 00:40:55,503   INFO  Generate label finished(sec_per_example: 0.1030 second).
+2025-01-21 00:40:55,503   INFO  recall_roi_0.3: 0.000000
+2025-01-21 00:40:55,503   INFO  recall_rcnn_0.3: 0.000000
+2025-01-21 00:40:55,503   INFO  recall_roi_0.5: 0.000000
+2025-01-21 00:40:55,503   INFO  recall_rcnn_0.5: 0.000000
+2025-01-21 00:40:55,503   INFO  recall_roi_0.7: 0.000000
+2025-01-21 00:40:55,503   INFO  recall_rcnn_0.7: 0.000000
+2025-01-21 00:40:55,505   INFO  Average predicted number of objects(3769 samples): 7.911
+2025-01-21 00:41:01,827   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:90.6443, 89.4407, 89.1765
+bev  AP:90.0456, 87.8316, 87.2345
+3d   AP:88.9952, 79.0304, 78.6678
+aos  AP:90.64, 89.39, 89.07
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:96.1334, 94.0829, 91.9512
+bev  AP:92.9979, 88.4627, 88.3047
+3d   AP:91.6443, 82.6698, 80.4953
+aos  AP:96.12, 94.01, 91.83
+Car AP@0.70, 0.50, 0.50:
+bbox AP:90.6443, 89.4407, 89.1765
+bev  AP:90.6143, 89.4452, 89.2185
+3d   AP:90.6109, 89.4227, 89.1885
+aos  AP:90.64, 89.39, 89.07
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:96.1334, 94.0829, 91.9512
+bev  AP:96.1105, 94.2029, 94.0127
+3d   AP:96.0951, 94.1812, 93.8107
+aos  AP:96.12, 94.01, 91.83
+
+2025-01-21 00:41:01,827   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/eval/eval_with_train/epoch_77/val
+2025-01-21 00:41:01,827   INFO  ****************Evaluation done.*****************
+2025-01-21 00:41:01,847   INFO  Epoch 77 has been evaluated
+2025-01-21 00:41:01,848   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/ckpt/checkpoint_epoch_78.pth to GPU
+2025-01-21 00:41:01,917   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60+pye337d7c
+2025-01-21 00:41:02,536   INFO  ==> Done (loaded 333/333)
+2025-01-21 00:41:02,540   INFO  *************** EPOCH 78 EVALUATION *****************
+2025-01-21 00:47:29,769   INFO  *************** Performance of EPOCH 78 *****************
+2025-01-21 00:47:29,769   INFO  Generate label finished(sec_per_example: 0.1027 second).
+2025-01-21 00:47:29,770   INFO  recall_roi_0.3: 0.000000
+2025-01-21 00:47:29,770   INFO  recall_rcnn_0.3: 0.000000
+2025-01-21 00:47:29,770   INFO  recall_roi_0.5: 0.000000
+2025-01-21 00:47:29,770   INFO  recall_rcnn_0.5: 0.000000
+2025-01-21 00:47:29,770   INFO  recall_roi_0.7: 0.000000
+2025-01-21 00:47:29,770   INFO  recall_rcnn_0.7: 0.000000
+2025-01-21 00:47:29,772   INFO  Average predicted number of objects(3769 samples): 7.325
+2025-01-21 00:47:35,502   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:90.5667, 89.3844, 89.1310
+bev  AP:90.0618, 87.8944, 87.4438
+3d   AP:88.8837, 78.8663, 78.4810
+aos  AP:90.56, 89.33, 89.01
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:95.9408, 94.1529, 92.0107
+bev  AP:92.9337, 90.4176, 88.4518
+3d   AP:91.5111, 82.4302, 80.2138
+aos  AP:95.93, 94.07, 91.88
+Car AP@0.70, 0.50, 0.50:
+bbox AP:90.5667, 89.3844, 89.1310
+bev  AP:90.5298, 89.3644, 89.1479
+3d   AP:90.5298, 89.3369, 89.1159
+aos  AP:90.56, 89.33, 89.01
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:95.9408, 94.1529, 92.0107
+bev  AP:95.8410, 94.2808, 94.0540
+3d   AP:95.8915, 94.2691, 93.9256
+aos  AP:95.93, 94.07, 91.88
+
+2025-01-21 00:47:35,503   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/eval/eval_with_train/epoch_78/val
+2025-01-21 00:47:35,503   INFO  ****************Evaluation done.*****************
+2025-01-21 00:47:35,523   INFO  Epoch 78 has been evaluated
+2025-01-21 00:47:35,524   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/ckpt/checkpoint_epoch_79.pth to GPU
+2025-01-21 00:47:35,597   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60+pye337d7c
+2025-01-21 00:47:36,200   INFO  ==> Done (loaded 333/333)
+2025-01-21 00:47:36,203   INFO  *************** EPOCH 79 EVALUATION *****************
+2025-01-21 00:54:04,108   INFO  *************** Performance of EPOCH 79 *****************
+2025-01-21 00:54:04,108   INFO  Generate label finished(sec_per_example: 0.1029 second).
+2025-01-21 00:54:04,108   INFO  recall_roi_0.3: 0.000000
+2025-01-21 00:54:04,108   INFO  recall_rcnn_0.3: 0.000000
+2025-01-21 00:54:04,108   INFO  recall_roi_0.5: 0.000000
+2025-01-21 00:54:04,108   INFO  recall_rcnn_0.5: 0.000000
+2025-01-21 00:54:04,108   INFO  recall_roi_0.7: 0.000000
+2025-01-21 00:54:04,108   INFO  recall_rcnn_0.7: 0.000000
+2025-01-21 00:54:04,110   INFO  Average predicted number of objects(3769 samples): 7.086
+2025-01-21 00:54:10,369   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:90.6764, 89.4004, 89.1328
+bev  AP:90.1152, 87.8729, 87.3774
+3d   AP:89.3365, 79.1516, 78.7812
+aos  AP:90.67, 89.34, 89.02
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:96.2312, 94.0531, 92.0534
+bev  AP:93.1311, 88.6917, 88.5669
+3d   AP:92.1632, 82.7979, 80.6660
+aos  AP:96.22, 93.97, 91.92
+Car AP@0.70, 0.50, 0.50:
+bbox AP:90.6764, 89.4004, 89.1328
+bev  AP:90.6448, 89.4230, 89.1953
+3d   AP:90.6448, 89.4014, 89.1707
+aos  AP:90.67, 89.34, 89.02
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:96.2312, 94.0531, 92.0534
+bev  AP:96.2237, 94.2563, 94.0940
+3d   AP:96.2091, 94.2070, 93.8343
+aos  AP:96.22, 93.97, 91.92
+
+2025-01-21 00:54:10,370   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/eval/eval_with_train/epoch_79/val
+2025-01-21 00:54:10,370   INFO  ****************Evaluation done.*****************
+2025-01-21 00:54:10,390   INFO  Epoch 79 has been evaluated
+2025-01-21 00:54:10,391   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/ckpt/checkpoint_epoch_80.pth to GPU
+2025-01-21 00:54:10,460   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60+pye337d7c
+2025-01-21 00:54:11,080   INFO  ==> Done (loaded 333/333)
+2025-01-21 00:54:11,084   INFO  *************** EPOCH 80 EVALUATION *****************
+2025-01-21 01:00:40,987   INFO  *************** Performance of EPOCH 80 *****************
+2025-01-21 01:00:40,987   INFO  Generate label finished(sec_per_example: 0.1034 second).
+2025-01-21 01:00:40,987   INFO  recall_roi_0.3: 0.000000
+2025-01-21 01:00:40,987   INFO  recall_rcnn_0.3: 0.000000
+2025-01-21 01:00:40,987   INFO  recall_roi_0.5: 0.000000
+2025-01-21 01:00:40,987   INFO  recall_rcnn_0.5: 0.000000
+2025-01-21 01:00:40,987   INFO  recall_roi_0.7: 0.000000
+2025-01-21 01:00:40,987   INFO  recall_rcnn_0.7: 0.000000
+2025-01-21 01:00:40,990   INFO  Average predicted number of objects(3769 samples): 7.309
+2025-01-21 01:00:48,217   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:90.6012, 89.3864, 89.1533
+bev  AP:90.0945, 87.9031, 87.4553
+3d   AP:88.8003, 78.8436, 78.5880
+aos  AP:90.59, 89.33, 89.04
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:96.0285, 94.1320, 92.0388
+bev  AP:92.9816, 90.1835, 88.4727
+3d   AP:91.3213, 82.3269, 80.2938
+aos  AP:96.02, 94.05, 91.91
+Car AP@0.70, 0.50, 0.50:
+bbox AP:90.6012, 89.3864, 89.1533
+bev  AP:90.5950, 89.4133, 89.2170
+3d   AP:90.5950, 89.3953, 89.1837
+aos  AP:90.59, 89.33, 89.04
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:96.0285, 94.1320, 92.0388
+bev  AP:96.0371, 94.2680, 94.1175
+3d   AP:96.0202, 94.2105, 93.8689
+aos  AP:96.02, 94.05, 91.91
+
+2025-01-21 01:00:48,218   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/pointrcnn_sasa/default/eval/eval_with_train/epoch_80/val
+2025-01-21 01:00:48,218   INFO  ****************Evaluation done.*****************
+2025-01-21 01:00:48,238   INFO  Epoch 80 has been evaluated
+2025-01-21 01:01:18,414   INFO  **********************End evaluation kitti_models/pointrcnn_sasa(default)**********************

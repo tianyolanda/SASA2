@@ -1,0 +1,1007 @@
+2025-01-09 23:20:38,603   INFO  **********************Start logging**********************
+2025-01-09 23:20:38,603   INFO  CUDA_VISIBLE_DEVICES=ALL
+2025-01-09 23:20:38,603   INFO  cfg_file         cfgs/kitti_models/3dssd.yaml
+2025-01-09 23:20:38,603   INFO  batch_size       2
+2025-01-09 23:20:38,603   INFO  epochs           80
+2025-01-09 23:20:38,603   INFO  workers          8
+2025-01-09 23:20:38,603   INFO  extra_tag        default
+2025-01-09 23:20:38,603   INFO  ckpt             None
+2025-01-09 23:20:38,603   INFO  pretrained_model None
+2025-01-09 23:20:38,603   INFO  launcher         none
+2025-01-09 23:20:38,603   INFO  tcp_port         18888
+2025-01-09 23:20:38,603   INFO  sync_bn          False
+2025-01-09 23:20:38,603   INFO  fix_random_seed  666
+2025-01-09 23:20:38,603   INFO  ckpt_save_interval 1
+2025-01-09 23:20:38,603   INFO  local_rank       0
+2025-01-09 23:20:38,603   INFO  max_ckpt_save_num 10
+2025-01-09 23:20:38,603   INFO  merge_all_iters_to_one_epoch False
+2025-01-09 23:20:38,603   INFO  set_cfgs         None
+2025-01-09 23:20:38,603   INFO  max_waiting_mins 0
+2025-01-09 23:20:38,603   INFO  start_epoch      0
+2025-01-09 23:20:38,603   INFO  save_to_file     False
+2025-01-09 23:20:38,603   INFO  cfg.ROOT_DIR: /home/ubuntu/codes/2025codes/SASA
+2025-01-09 23:20:38,603   INFO  cfg.LOCAL_RANK: 0
+2025-01-09 23:20:38,603   INFO  cfg.CLASS_NAMES: ['Car']
+2025-01-09 23:20:38,603   INFO  
+cfg.DATA_CONFIG = edict()
+2025-01-09 23:20:38,604   INFO  cfg.DATA_CONFIG.DATASET: KittiDataset
+2025-01-09 23:20:38,604   INFO  cfg.DATA_CONFIG.DATA_PATH: ../data/kitti
+2025-01-09 23:20:38,604   INFO  cfg.DATA_CONFIG.POINT_CLOUD_RANGE: [0, -40, -3, 70.4, 40, 1]
+2025-01-09 23:20:38,604   INFO  
+cfg.DATA_CONFIG.DATA_SPLIT = edict()
+2025-01-09 23:20:38,604   INFO  cfg.DATA_CONFIG.DATA_SPLIT.train: train
+2025-01-09 23:20:38,604   INFO  cfg.DATA_CONFIG.DATA_SPLIT.test: val
+2025-01-09 23:20:38,604   INFO  
+cfg.DATA_CONFIG.INFO_PATH = edict()
+2025-01-09 23:20:38,604   INFO  cfg.DATA_CONFIG.INFO_PATH.train: ['kitti_infos_train.pkl']
+2025-01-09 23:20:38,604   INFO  cfg.DATA_CONFIG.INFO_PATH.test: ['kitti_infos_val.pkl']
+2025-01-09 23:20:38,604   INFO  cfg.DATA_CONFIG.FOV_POINTS_ONLY: True
+2025-01-09 23:20:38,604   INFO  
+cfg.DATA_CONFIG.DATA_AUGMENTOR = edict()
+2025-01-09 23:20:38,604   INFO  cfg.DATA_CONFIG.DATA_AUGMENTOR.DISABLE_AUG_LIST: ['placeholder']
+2025-01-09 23:20:38,604   INFO  cfg.DATA_CONFIG.DATA_AUGMENTOR.AUG_CONFIG_LIST: [{'NAME': 'gt_sampling', 'USE_ROAD_PLANE': True, 'DB_INFO_PATH': ['kitti_dbinfos_train.pkl'], 'PREPARE': {'filter_by_min_points': ['Car:5'], 'filter_by_difficulty': [-1]}, 'SAMPLE_GROUPS': ['Car: 15'], 'NUM_POINT_FEATURES': 4, 'DATABASE_WITH_FAKELIDAR': False, 'REMOVE_EXTRA_WIDTH': [0.0, 0.0, 0.0], 'LIMIT_WHOLE_SCENE': False}, {'NAME': 'random_world_flip', 'ENABLE_PROB': 0.5, 'ALONG_AXIS_LIST': ['x']}, {'NAME': 'random_box_noise', 'ENABLE_PROB': 0.5, 'LOC_NOISE': [1.0, 1.0, 0.0], 'SCALE_RANGE': [1.0, 1.0], 'ROTATION_RANGE': [-1.04719755, 1.04719755]}, {'NAME': 'random_world_rotation', 'ENABLE_PROB': 0.5, 'WORLD_ROT_ANGLE': [-0.78539816, 0.78539816]}, {'NAME': 'random_world_scaling', 'ENABLE_PROB': 0.5, 'WORLD_SCALE_RANGE': [0.9, 1.1]}]
+2025-01-09 23:20:38,604   INFO  
+cfg.DATA_CONFIG.POINT_FEATURE_ENCODING = edict()
+2025-01-09 23:20:38,604   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.encoding_type: absolute_coordinates_encoding
+2025-01-09 23:20:38,604   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.used_feature_list: ['x', 'y', 'z', 'intensity']
+2025-01-09 23:20:38,604   INFO  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.src_feature_list: ['x', 'y', 'z', 'intensity']
+2025-01-09 23:20:38,604   INFO  cfg.DATA_CONFIG.DATA_PROCESSOR: [{'NAME': 'mask_points_and_boxes_outside_range', 'REMOVE_OUTSIDE_BOXES': True}, {'NAME': 'sample_points', 'NUM_POINTS': {'train': 16384, 'test': 16384}}, {'NAME': 'shuffle_points', 'SHUFFLE_ENABLED': {'train': True, 'test': False}}]
+2025-01-09 23:20:38,604   INFO  cfg.DATA_CONFIG._BASE_CONFIG_: cfgs/dataset_configs/kitti_dataset.yaml
+2025-01-09 23:20:38,604   INFO  
+cfg.MODEL = edict()
+2025-01-09 23:20:38,604   INFO  cfg.MODEL.NAME: 3DSSD
+2025-01-09 23:20:38,604   INFO  
+cfg.MODEL.BACKBONE_3D = edict()
+2025-01-09 23:20:38,604   INFO  cfg.MODEL.BACKBONE_3D.NAME: PointNet2FSMSG
+2025-01-09 23:20:38,604   INFO  
+cfg.MODEL.BACKBONE_3D.SA_CONFIG = edict()
+2025-01-09 23:20:38,604   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.NPOINT_LIST: [[4096], [512, 512], [256, 256]]
+2025-01-09 23:20:38,604   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.SAMPLE_RANGE_LIST: [[[0, 16384]], [[0, 4096], [0, 4096]], [[0, 512], [512, 1024]]]
+2025-01-09 23:20:38,604   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.SAMPLE_METHOD_LIST: [['d-fps'], ['f-fps', 'd-fps'], ['f-fps', 'd-fps']]
+2025-01-09 23:20:38,604   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.RADIUS: [[0.2, 0.4, 0.8], [0.4, 0.8, 1.6], [1.6, 3.2, 4.8]]
+2025-01-09 23:20:38,604   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.NSAMPLE: [[32, 32, 64], [32, 32, 64], [32, 32, 64]]
+2025-01-09 23:20:38,604   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.MLPS: [[[16, 16, 32], [16, 16, 32], [32, 32, 64]], [[64, 64, 128], [64, 64, 128], [64, 96, 128]], [[128, 128, 256], [128, 196, 256], [128, 256, 256]]]
+2025-01-09 23:20:38,604   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.AGGREGATION_MLPS: [[64], [128], [256]]
+2025-01-09 23:20:38,604   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.WEIGHT_GAMMA: 1.0
+2025-01-09 23:20:38,604   INFO  cfg.MODEL.BACKBONE_3D.SA_CONFIG.DILATED_RADIUS_GROUP: True
+2025-01-09 23:20:38,604   INFO  
+cfg.MODEL.POINT_HEAD = edict()
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.NAME: PointHeadVote
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.CLASS_AGNOSTIC: False
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.USE_BN: True
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.SAMPLE_RANGE: [0, 256]
+2025-01-09 23:20:38,605   INFO  
+cfg.MODEL.POINT_HEAD.VOTE_CONFIG = edict()
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.VOTE_CONFIG.VOTE_FC: [128]
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.VOTE_CONFIG.MAX_TRANSLATION_RANGE: [3.0, 3.0, 2.0]
+2025-01-09 23:20:38,605   INFO  
+cfg.MODEL.POINT_HEAD.SA_CONFIG = edict()
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.SA_CONFIG.RADIUS: [4.8, 6.4]
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.SA_CONFIG.NSAMPLE: [48, 64]
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.SA_CONFIG.MLPS: [[256, 256, 512], [256, 512, 1024]]
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.SHARED_FC: [512, 256]
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.CLS_FC: [128]
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.REG_FC: [128]
+2025-01-09 23:20:38,605   INFO  
+cfg.MODEL.POINT_HEAD.TARGET_CONFIG = edict()
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.TARGET_CONFIG.VOTE_EXTRA_WIDTH: [0.1, 0.1, 0.1]
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.TARGET_CONFIG.ASSIGN_METHOD: mask
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.TARGET_CONFIG.GT_CENTRAL_RADIUS: 10.0
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.TARGET_CONFIG.BOX_CODER: PointBinResidualCoder
+2025-01-09 23:20:38,605   INFO  
+cfg.MODEL.POINT_HEAD.TARGET_CONFIG.BOX_CODER_CONFIG = edict()
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.TARGET_CONFIG.BOX_CODER_CONFIG.use_mean_size: False
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.TARGET_CONFIG.BOX_CODER_CONFIG.angle_bin_num: 12
+2025-01-09 23:20:38,605   INFO  
+cfg.MODEL.POINT_HEAD.LOSS_CONFIG = edict()
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_CLS: WeightedBinaryCrossEntropyWithCenterness
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_REG: WeightedSmoothL1Loss
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.AXIS_ALIGNED_IOU_LOSS_REGULARIZATION: True
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.CORNER_LOSS_REGULARIZATION: True
+2025-01-09 23:20:38,605   INFO  
+cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS = edict()
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.vote_reg_weight: 1.0
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.point_cls_weight: 1.0
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.point_offset_reg_weight: 1.0
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.point_angle_cls_weight: 1.0
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.point_angle_reg_weight: 1.0
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.point_iou_weight: 1.0
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.point_corner_weight: 1.0
+2025-01-09 23:20:38,605   INFO  
+cfg.MODEL.POST_PROCESSING = edict()
+2025-01-09 23:20:38,605   INFO  cfg.MODEL.POST_PROCESSING.RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
+2025-01-09 23:20:38,606   INFO  cfg.MODEL.POST_PROCESSING.SCORE_THRESH: 0.1
+2025-01-09 23:20:38,606   INFO  cfg.MODEL.POST_PROCESSING.OUTPUT_RAW_SCORE: False
+2025-01-09 23:20:38,606   INFO  cfg.MODEL.POST_PROCESSING.EVAL_METRIC: kitti
+2025-01-09 23:20:38,606   INFO  
+cfg.MODEL.POST_PROCESSING.NMS_CONFIG = edict()
+2025-01-09 23:20:38,606   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.MULTI_CLASSES_NMS: False
+2025-01-09 23:20:38,606   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_TYPE: nms_gpu
+2025-01-09 23:20:38,606   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_THRESH: 0.01
+2025-01-09 23:20:38,606   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_PRE_MAXSIZE: 4096
+2025-01-09 23:20:38,606   INFO  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_POST_MAXSIZE: 500
+2025-01-09 23:20:38,606   INFO  
+cfg.OPTIMIZATION = edict()
+2025-01-09 23:20:38,606   INFO  cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU: 2
+2025-01-09 23:20:38,606   INFO  cfg.OPTIMIZATION.NUM_EPOCHS: 80
+2025-01-09 23:20:38,606   INFO  cfg.OPTIMIZATION.OPTIMIZER: adam_onecycle
+2025-01-09 23:20:38,606   INFO  cfg.OPTIMIZATION.LR: 0.01
+2025-01-09 23:20:38,606   INFO  cfg.OPTIMIZATION.WEIGHT_DECAY: 0.01
+2025-01-09 23:20:38,606   INFO  cfg.OPTIMIZATION.MOMENTUM: 0.9
+2025-01-09 23:20:38,606   INFO  cfg.OPTIMIZATION.MOMS: [0.95, 0.85]
+2025-01-09 23:20:38,606   INFO  cfg.OPTIMIZATION.PCT_START: 0.4
+2025-01-09 23:20:38,606   INFO  cfg.OPTIMIZATION.DIV_FACTOR: 10
+2025-01-09 23:20:38,606   INFO  cfg.OPTIMIZATION.DECAY_STEP_LIST: [35, 45]
+2025-01-09 23:20:38,606   INFO  cfg.OPTIMIZATION.LR_DECAY: 0.1
+2025-01-09 23:20:38,606   INFO  cfg.OPTIMIZATION.LR_CLIP: 1e-07
+2025-01-09 23:20:38,606   INFO  cfg.OPTIMIZATION.LR_WARMUP: False
+2025-01-09 23:20:38,606   INFO  cfg.OPTIMIZATION.WARMUP_EPOCH: 1
+2025-01-09 23:20:38,606   INFO  cfg.OPTIMIZATION.GRAD_NORM_CLIP: 10
+2025-01-09 23:20:38,606   INFO  cfg.TAG: 3dssd
+2025-01-09 23:20:38,606   INFO  cfg.EXP_GROUP_PATH: kitti_models
+2025-01-09 23:20:38,750   INFO  Database filter by min points Car: 14357 => 13532
+2025-01-09 23:20:38,764   INFO  Database filter by difficulty Car: 13532 => 10759
+2025-01-09 23:20:38,770   INFO  Loading KITTI dataset
+2025-01-09 23:20:38,850   INFO  Total samples for KITTI dataset: 3712
+2025-01-09 23:20:42,039   INFO  Point3DSSD(
+  (vfe): None
+  (backbone_3d): PointNet2FSMSG(
+    (SA_modules): ModuleList(
+      (0): PointnetSAModuleFSMSG(
+        (groupers): ModuleList(
+          (0): QueryAndGroupDilated()
+          (1): QueryAndGroupDilated()
+          (2): QueryAndGroupDilated()
+        )
+        (mlps): ModuleList(
+          (0): Sequential(
+            (0): Conv2d(4, 16, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(16, 16, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(16, 32, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+          (1): Sequential(
+            (0): Conv2d(4, 16, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(16, 16, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(16, 32, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+          (2): Sequential(
+            (0): Conv2d(4, 32, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(32, 32, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(32, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+        )
+        (aggregation_mlp): Sequential(
+          (0): Conv1d(128, 64, kernel_size=(1,), stride=(1,), bias=False)
+          (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (1): PointnetSAModuleFSMSG(
+        (groupers): ModuleList(
+          (0): QueryAndGroupDilated()
+          (1): QueryAndGroupDilated()
+          (2): QueryAndGroupDilated()
+        )
+        (mlps): ModuleList(
+          (0): Sequential(
+            (0): Conv2d(67, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(64, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+          (1): Sequential(
+            (0): Conv2d(67, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(64, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+          (2): Sequential(
+            (0): Conv2d(67, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(64, 96, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(96, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(96, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+        )
+        (aggregation_mlp): Sequential(
+          (0): Conv1d(384, 128, kernel_size=(1,), stride=(1,), bias=False)
+          (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+      (2): PointnetSAModuleFSMSG(
+        (groupers): ModuleList(
+          (0): QueryAndGroupDilated()
+          (1): QueryAndGroupDilated()
+          (2): QueryAndGroupDilated()
+        )
+        (mlps): ModuleList(
+          (0): Sequential(
+            (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(128, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+          (1): Sequential(
+            (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(128, 196, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(196, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(196, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+          (2): Sequential(
+            (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU()
+            (3): Conv2d(128, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (4): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (5): ReLU()
+            (6): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (7): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (8): ReLU()
+          )
+        )
+        (aggregation_mlp): Sequential(
+          (0): Conv1d(768, 256, kernel_size=(1,), stride=(1,), bias=False)
+          (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+    )
+  )
+  (map_to_bev_module): None
+  (pfe): None
+  (backbone_2d): None
+  (dense_head): None
+  (point_head): PointHeadVote(
+    (cls_loss_func): WeightedBinaryCrossEntropyLoss()
+    (reg_loss_func): WeightedSmoothL1Loss()
+    (vote_layers): Sequential(
+      (0): Conv1d(256, 128, kernel_size=(1,), stride=(1,), bias=False)
+      (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU()
+      (3): Conv1d(128, 3, kernel_size=(1,), stride=(1,))
+    )
+    (SA_module): PointnetSAModuleFSMSG(
+      (groupers): ModuleList(
+        (0): QueryAndGroup()
+        (1): QueryAndGroup()
+      )
+      (mlps): ModuleList(
+        (0): Sequential(
+          (0): Conv2d(259, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+          (3): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (4): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (5): ReLU()
+          (6): Conv2d(256, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (7): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (8): ReLU()
+        )
+        (1): Sequential(
+          (0): Conv2d(259, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU()
+          (3): Conv2d(256, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (4): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (5): ReLU()
+          (6): Conv2d(512, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (7): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (8): ReLU()
+        )
+      )
+    )
+    (shared_fc_layer): Sequential(
+      (0): Conv1d(1536, 512, kernel_size=(1,), stride=(1,), bias=False)
+      (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU()
+      (3): Conv1d(512, 256, kernel_size=(1,), stride=(1,), bias=False)
+      (4): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (5): ReLU()
+    )
+    (cls_layers): Sequential(
+      (0): Conv1d(256, 128, kernel_size=(1,), stride=(1,), bias=False)
+      (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU()
+      (3): Conv1d(128, 1, kernel_size=(1,), stride=(1,))
+    )
+    (reg_layers): Sequential(
+      (0): Conv1d(256, 128, kernel_size=(1,), stride=(1,), bias=False)
+      (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU()
+      (3): Conv1d(128, 30, kernel_size=(1,), stride=(1,))
+    )
+  )
+  (roi_head): None
+)
+2025-01-09 23:20:42,040   INFO  **********************Start training kitti_models/3dssd(default)**********************
+2025-01-10 22:37:25,750   INFO  **********************End training kitti_models/3dssd(default)**********************
+
+
+
+2025-01-10 22:37:25,750   INFO  **********************Start evaluation kitti_models/3dssd(default)**********************
+2025-01-10 22:37:25,751   INFO  Loading KITTI dataset
+2025-01-10 22:37:25,846   INFO  Total samples for KITTI dataset: 3769
+2025-01-10 22:37:25,847   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/ckpt/checkpoint_epoch_71.pth to GPU
+2025-01-10 22:37:25,893   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60
+2025-01-10 22:37:26,214   INFO  ==> Done (loaded 253/253)
+2025-01-10 22:37:26,217   INFO  *************** EPOCH 71 EVALUATION *****************
+2025-01-10 22:41:05,852   INFO  *************** Performance of EPOCH 71 *****************
+2025-01-10 22:41:05,852   INFO  Generate label finished(sec_per_example: 0.0583 second).
+2025-01-10 22:41:05,852   INFO  recall_roi_0.3: 0.000000
+2025-01-10 22:41:05,852   INFO  recall_rcnn_0.3: 0.940702
+2025-01-10 22:41:05,852   INFO  recall_roi_0.5: 0.000000
+2025-01-10 22:41:05,852   INFO  recall_rcnn_0.5: 0.921794
+2025-01-10 22:41:05,852   INFO  recall_roi_0.7: 0.000000
+2025-01-10 22:41:05,852   INFO  recall_rcnn_0.7: 0.761279
+2025-01-10 22:41:05,852   INFO  positive_point_L0S0: 180.407535
+2025-01-10 22:41:05,852   INFO  recall_point_L0S0: 0.983664
+2025-01-10 22:41:05,852   INFO  	- Car: 0.983664
+2025-01-10 22:41:05,852   INFO  positive_point_L1S0: 33.815336
+2025-01-10 22:41:05,852   INFO  recall_point_L1S0: 0.978311
+2025-01-10 22:41:05,852   INFO  	- Car: 0.978311
+2025-01-10 22:41:05,852   INFO  positive_point_L1S1: 16.307509
+2025-01-10 22:41:05,852   INFO  recall_point_L1S1: 0.968856
+2025-01-10 22:41:05,852   INFO  	- Car: 0.968856
+2025-01-10 22:41:05,852   INFO  positive_point_L2S0: 16.932873
+2025-01-10 22:41:05,852   INFO  recall_point_L2S0: 0.963226
+2025-01-10 22:41:05,853   INFO  	- Car: 0.963226
+2025-01-10 22:41:05,853   INFO  positive_point_L2S1: 6.978509
+2025-01-10 22:41:05,853   INFO  recall_point_L2S1: 0.915607
+2025-01-10 22:41:05,853   INFO  	- Car: 0.915607
+2025-01-10 22:41:05,853   INFO  positive_point_candidate: 16.932873
+2025-01-10 22:41:05,853   INFO  recall_point_candidate: 0.963226
+2025-01-10 22:41:05,853   INFO  	- Car: 0.963226
+2025-01-10 22:41:05,853   INFO  positive_point_vote: 37.171664
+2025-01-10 22:41:05,853   INFO  recall_point_vote: 0.979284
+2025-01-10 22:41:05,853   INFO  	- Car: 0.979284
+2025-01-10 22:41:05,853   INFO  positive_point_candidate: 16.932873
+2025-01-10 22:41:05,853   INFO  recall_point_candidate: 0.963226
+2025-01-10 22:41:05,853   INFO  	- Car: 0.963226
+2025-01-10 22:41:05,853   INFO  positive_point_vote: 37.171664
+2025-01-10 22:41:05,853   INFO  recall_point_vote: 0.979284
+2025-01-10 22:41:05,853   INFO  	- Car: 0.979284
+2025-01-10 22:41:05,855   INFO  Average predicted number of objects(3769 samples): 5.494
+2025-01-10 22:41:24,067   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:96.3125, 89.7014, 89.0229
+bev  AP:89.8911, 88.0288, 86.4041
+3d   AP:88.2377, 78.4222, 77.3088
+aos  AP:96.27, 89.63, 88.86
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:98.2721, 94.7903, 92.2845
+bev  AP:94.7030, 90.6439, 88.1962
+3d   AP:90.6058, 82.0029, 79.1983
+aos  AP:98.25, 94.68, 92.09
+Car AP@0.70, 0.50, 0.50:
+bbox AP:96.3125, 89.7014, 89.0229
+bev  AP:96.3689, 95.6599, 89.3033
+3d   AP:96.2888, 89.8234, 89.2162
+aos  AP:96.27, 89.63, 88.86
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:98.2721, 94.7903, 92.2845
+bev  AP:98.2946, 96.8315, 94.6105
+3d   AP:98.2453, 95.0942, 94.4094
+aos  AP:98.25, 94.68, 92.09
+
+2025-01-10 22:41:24,074   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/eval/eval_with_train/epoch_71/val
+2025-01-10 22:41:24,074   INFO  ****************Evaluation done.*****************
+2025-01-10 22:41:24,095   INFO  Epoch 71 has been evaluated
+2025-01-10 22:41:24,096   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/ckpt/checkpoint_epoch_72.pth to GPU
+2025-01-10 22:41:24,143   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60
+2025-01-10 22:41:24,448   INFO  ==> Done (loaded 253/253)
+2025-01-10 22:41:24,450   INFO  *************** EPOCH 72 EVALUATION *****************
+2025-01-10 22:45:03,682   INFO  *************** Performance of EPOCH 72 *****************
+2025-01-10 22:45:03,682   INFO  Generate label finished(sec_per_example: 0.0582 second).
+2025-01-10 22:45:03,682   INFO  recall_roi_0.3: 0.000000
+2025-01-10 22:45:03,682   INFO  recall_rcnn_0.3: 0.946889
+2025-01-10 22:45:03,682   INFO  recall_roi_0.5: 0.000000
+2025-01-10 22:45:03,682   INFO  recall_rcnn_0.5: 0.927077
+2025-01-10 22:45:03,682   INFO  recall_roi_0.7: 0.000000
+2025-01-10 22:45:03,683   INFO  recall_rcnn_0.7: 0.770942
+2025-01-10 22:45:03,683   INFO  positive_point_L0S0: 180.301406
+2025-01-10 22:45:03,683   INFO  recall_point_L0S0: 0.983455
+2025-01-10 22:45:03,683   INFO  	- Car: 0.983455
+2025-01-10 22:45:03,683   INFO  positive_point_L1S0: 34.113558
+2025-01-10 22:45:03,683   INFO  recall_point_L1S0: 0.978589
+2025-01-10 22:45:03,683   INFO  	- Car: 0.978589
+2025-01-10 22:45:03,683   INFO  positive_point_L1S1: 16.346776
+2025-01-10 22:45:03,683   INFO  recall_point_L1S1: 0.966354
+2025-01-10 22:45:03,683   INFO  	- Car: 0.966354
+2025-01-10 22:45:03,683   INFO  positive_point_L2S0: 16.529053
+2025-01-10 22:45:03,683   INFO  recall_point_L2S0: 0.962878
+2025-01-10 22:45:03,683   INFO  	- Car: 0.962878
+2025-01-10 22:45:03,683   INFO  positive_point_L2S1: 6.979570
+2025-01-10 22:45:03,683   INFO  recall_point_L2S1: 0.916788
+2025-01-10 22:45:03,683   INFO  	- Car: 0.916788
+2025-01-10 22:45:03,683   INFO  positive_point_candidate: 16.529053
+2025-01-10 22:45:03,683   INFO  recall_point_candidate: 0.962878
+2025-01-10 22:45:03,683   INFO  	- Car: 0.962878
+2025-01-10 22:45:03,683   INFO  positive_point_vote: 36.601486
+2025-01-10 22:45:03,683   INFO  recall_point_vote: 0.981091
+2025-01-10 22:45:03,683   INFO  	- Car: 0.981091
+2025-01-10 22:45:03,683   INFO  positive_point_candidate: 16.529053
+2025-01-10 22:45:03,683   INFO  recall_point_candidate: 0.962878
+2025-01-10 22:45:03,683   INFO  	- Car: 0.962878
+2025-01-10 22:45:03,683   INFO  positive_point_vote: 36.601486
+2025-01-10 22:45:03,683   INFO  recall_point_vote: 0.981091
+2025-01-10 22:45:03,683   INFO  	- Car: 0.981091
+2025-01-10 22:45:03,686   INFO  Average predicted number of objects(3769 samples): 5.654
+2025-01-10 22:45:10,002   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:96.7263, 89.9163, 89.3043
+bev  AP:90.2227, 88.2398, 86.8782
+3d   AP:89.2896, 79.0919, 78.0325
+aos  AP:96.68, 89.84, 89.15
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:98.4128, 95.0829, 92.5848
+bev  AP:95.0123, 90.8603, 88.5290
+3d   AP:91.8618, 82.8146, 80.0014
+aos  AP:98.38, 94.97, 92.39
+Car AP@0.70, 0.50, 0.50:
+bbox AP:96.7263, 89.9163, 89.3043
+bev  AP:96.7996, 89.9839, 89.5074
+3d   AP:96.7371, 89.9689, 89.4539
+aos  AP:96.68, 89.84, 89.15
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:98.4128, 95.0829, 92.5848
+bev  AP:98.4394, 95.3295, 94.8247
+3d   AP:98.4089, 95.2757, 94.7027
+aos  AP:98.38, 94.97, 92.39
+
+2025-01-10 22:45:10,003   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/eval/eval_with_train/epoch_72/val
+2025-01-10 22:45:10,003   INFO  ****************Evaluation done.*****************
+2025-01-10 22:45:10,022   INFO  Epoch 72 has been evaluated
+2025-01-10 22:45:10,023   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/ckpt/checkpoint_epoch_73.pth to GPU
+2025-01-10 22:45:10,071   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60
+2025-01-10 22:45:10,423   INFO  ==> Done (loaded 253/253)
+2025-01-10 22:45:10,427   INFO  *************** EPOCH 73 EVALUATION *****************
+2025-01-10 22:48:50,544   INFO  *************** Performance of EPOCH 73 *****************
+2025-01-10 22:48:50,544   INFO  Generate label finished(sec_per_example: 0.0584 second).
+2025-01-10 22:48:50,545   INFO  recall_roi_0.3: 0.000000
+2025-01-10 22:48:50,545   INFO  recall_rcnn_0.3: 0.943830
+2025-01-10 22:48:50,545   INFO  recall_roi_0.5: 0.000000
+2025-01-10 22:48:50,545   INFO  recall_rcnn_0.5: 0.925269
+2025-01-10 22:48:50,545   INFO  recall_roi_0.7: 0.000000
+2025-01-10 22:48:50,545   INFO  recall_rcnn_0.7: 0.767049
+2025-01-10 22:48:50,545   INFO  positive_point_L0S0: 180.309631
+2025-01-10 22:48:50,545   INFO  recall_point_L0S0: 0.983525
+2025-01-10 22:48:50,545   INFO  	- Car: 0.983525
+2025-01-10 22:48:50,545   INFO  positive_point_L1S0: 33.789334
+2025-01-10 22:48:50,545   INFO  recall_point_L1S0: 0.978241
+2025-01-10 22:48:50,545   INFO  	- Car: 0.978241
+2025-01-10 22:48:50,545   INFO  positive_point_L1S1: 16.359512
+2025-01-10 22:48:50,546   INFO  recall_point_L1S1: 0.969135
+2025-01-10 22:48:50,546   INFO  	- Car: 0.969135
+2025-01-10 22:48:50,546   INFO  positive_point_L2S0: 16.811356
+2025-01-10 22:48:50,546   INFO  recall_point_L2S0: 0.964129
+2025-01-10 22:48:50,546   INFO  	- Car: 0.964129
+2025-01-10 22:48:50,546   INFO  positive_point_L2S1: 7.001857
+2025-01-10 22:48:50,546   INFO  recall_point_L2S1: 0.918179
+2025-01-10 22:48:50,546   INFO  	- Car: 0.918179
+2025-01-10 22:48:50,546   INFO  positive_point_candidate: 16.811356
+2025-01-10 22:48:50,546   INFO  recall_point_candidate: 0.964129
+2025-01-10 22:48:50,546   INFO  	- Car: 0.964129
+2025-01-10 22:48:50,546   INFO  positive_point_vote: 37.066065
+2025-01-10 22:48:50,546   INFO  recall_point_vote: 0.980952
+2025-01-10 22:48:50,546   INFO  	- Car: 0.980952
+2025-01-10 22:48:50,546   INFO  positive_point_candidate: 16.811356
+2025-01-10 22:48:50,547   INFO  recall_point_candidate: 0.964129
+2025-01-10 22:48:50,547   INFO  	- Car: 0.964129
+2025-01-10 22:48:50,547   INFO  positive_point_vote: 37.066065
+2025-01-10 22:48:50,547   INFO  recall_point_vote: 0.980952
+2025-01-10 22:48:50,547   INFO  	- Car: 0.980952
+2025-01-10 22:48:50,549   INFO  Average predicted number of objects(3769 samples): 5.568
+2025-01-10 22:48:57,848   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:96.6051, 89.8521, 89.0684
+bev  AP:90.2626, 88.2197, 86.3077
+3d   AP:88.8922, 78.9004, 77.7369
+aos  AP:96.56, 89.76, 88.89
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:98.1135, 94.7735, 92.3310
+bev  AP:95.2099, 89.3696, 88.3318
+3d   AP:91.4063, 82.5369, 79.6657
+aos  AP:98.08, 94.65, 92.12
+Car AP@0.70, 0.50, 0.50:
+bbox AP:96.6051, 89.8521, 89.0684
+bev  AP:96.6915, 89.9439, 89.3330
+3d   AP:96.6391, 89.9219, 89.2619
+aos  AP:96.56, 89.76, 88.89
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:98.1135, 94.7735, 92.3310
+bev  AP:98.2215, 95.2370, 94.5859
+3d   AP:98.1919, 95.1695, 94.4064
+aos  AP:98.08, 94.65, 92.12
+
+2025-01-10 22:48:57,849   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/eval/eval_with_train/epoch_73/val
+2025-01-10 22:48:57,849   INFO  ****************Evaluation done.*****************
+2025-01-10 22:48:57,869   INFO  Epoch 73 has been evaluated
+2025-01-10 22:48:57,870   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/ckpt/checkpoint_epoch_74.pth to GPU
+2025-01-10 22:48:57,919   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60
+2025-01-10 22:48:58,240   INFO  ==> Done (loaded 253/253)
+2025-01-10 22:48:58,243   INFO  *************** EPOCH 74 EVALUATION *****************
+2025-01-10 22:52:38,517   INFO  *************** Performance of EPOCH 74 *****************
+2025-01-10 22:52:38,517   INFO  Generate label finished(sec_per_example: 0.0584 second).
+2025-01-10 22:52:38,517   INFO  recall_roi_0.3: 0.000000
+2025-01-10 22:52:38,517   INFO  recall_rcnn_0.3: 0.947584
+2025-01-10 22:52:38,517   INFO  recall_roi_0.5: 0.000000
+2025-01-10 22:52:38,517   INFO  recall_rcnn_0.5: 0.929162
+2025-01-10 22:52:38,517   INFO  recall_roi_0.7: 0.000000
+2025-01-10 22:52:38,517   INFO  recall_rcnn_0.7: 0.768509
+2025-01-10 22:52:38,517   INFO  positive_point_L0S0: 180.240913
+2025-01-10 22:52:38,517   INFO  recall_point_L0S0: 0.983525
+2025-01-10 22:52:38,517   INFO  	- Car: 0.983525
+2025-01-10 22:52:38,517   INFO  positive_point_L1S0: 34.252322
+2025-01-10 22:52:38,517   INFO  recall_point_L1S0: 0.978797
+2025-01-10 22:52:38,517   INFO  	- Car: 0.978797
+2025-01-10 22:52:38,517   INFO  positive_point_L1S1: 16.359246
+2025-01-10 22:52:38,517   INFO  recall_point_L1S1: 0.968995
+2025-01-10 22:52:38,517   INFO  	- Car: 0.968995
+2025-01-10 22:52:38,518   INFO  positive_point_L2S0: 16.783762
+2025-01-10 22:52:38,518   INFO  recall_point_L2S0: 0.963295
+2025-01-10 22:52:38,518   INFO  	- Car: 0.963295
+2025-01-10 22:52:38,518   INFO  positive_point_L2S1: 7.002388
+2025-01-10 22:52:38,518   INFO  recall_point_L2S1: 0.916232
+2025-01-10 22:52:38,518   INFO  	- Car: 0.916232
+2025-01-10 22:52:38,518   INFO  positive_point_candidate: 16.783762
+2025-01-10 22:52:38,518   INFO  recall_point_candidate: 0.963295
+2025-01-10 22:52:38,518   INFO  	- Car: 0.963295
+2025-01-10 22:52:38,518   INFO  positive_point_vote: 37.500663
+2025-01-10 22:52:38,518   INFO  recall_point_vote: 0.980257
+2025-01-10 22:52:38,518   INFO  	- Car: 0.980257
+2025-01-10 22:52:38,518   INFO  positive_point_candidate: 16.783762
+2025-01-10 22:52:38,518   INFO  recall_point_candidate: 0.963295
+2025-01-10 22:52:38,518   INFO  	- Car: 0.963295
+2025-01-10 22:52:38,518   INFO  positive_point_vote: 37.500663
+2025-01-10 22:52:38,518   INFO  recall_point_vote: 0.980257
+2025-01-10 22:52:38,518   INFO  	- Car: 0.980257
+2025-01-10 22:52:38,520   INFO  Average predicted number of objects(3769 samples): 5.625
+2025-01-10 22:52:44,708   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:90.7805, 89.9349, 89.1149
+bev  AP:90.3266, 88.2201, 86.7199
+3d   AP:88.7057, 78.8294, 77.6239
+aos  AP:90.77, 89.86, 88.97
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:96.4405, 94.9190, 92.4346
+bev  AP:94.9948, 89.3910, 88.4921
+3d   AP:91.3186, 82.4926, 79.5829
+aos  AP:96.41, 94.81, 92.25
+Car AP@0.70, 0.50, 0.50:
+bbox AP:90.7805, 89.9349, 89.1149
+bev  AP:90.7579, 90.0105, 89.4166
+3d   AP:90.7579, 89.9924, 89.3660
+aos  AP:90.77, 89.86, 88.97
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:96.4405, 94.9190, 92.4346
+bev  AP:96.4629, 95.3323, 94.7867
+3d   AP:96.4529, 95.2707, 94.6482
+aos  AP:96.41, 94.81, 92.25
+
+2025-01-10 22:52:44,709   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/eval/eval_with_train/epoch_74/val
+2025-01-10 22:52:44,709   INFO  ****************Evaluation done.*****************
+2025-01-10 22:52:44,729   INFO  Epoch 74 has been evaluated
+2025-01-10 22:52:44,730   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/ckpt/checkpoint_epoch_75.pth to GPU
+2025-01-10 22:52:44,779   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60
+2025-01-10 22:52:45,125   INFO  ==> Done (loaded 253/253)
+2025-01-10 22:52:45,129   INFO  *************** EPOCH 75 EVALUATION *****************
+2025-01-10 22:56:25,699   INFO  *************** Performance of EPOCH 75 *****************
+2025-01-10 22:56:25,700   INFO  Generate label finished(sec_per_example: 0.0585 second).
+2025-01-10 22:56:25,700   INFO  recall_roi_0.3: 0.000000
+2025-01-10 22:56:25,700   INFO  recall_rcnn_0.3: 0.940911
+2025-01-10 22:56:25,700   INFO  recall_roi_0.5: 0.000000
+2025-01-10 22:56:25,700   INFO  recall_rcnn_0.5: 0.924088
+2025-01-10 22:56:25,700   INFO  recall_roi_0.7: 0.000000
+2025-01-10 22:56:25,700   INFO  recall_rcnn_0.7: 0.771568
+2025-01-10 22:56:25,700   INFO  positive_point_L0S0: 180.239055
+2025-01-10 22:56:25,700   INFO  recall_point_L0S0: 0.983525
+2025-01-10 22:56:25,700   INFO  	- Car: 0.983525
+2025-01-10 22:56:25,700   INFO  positive_point_L1S0: 34.346511
+2025-01-10 22:56:25,700   INFO  recall_point_L1S0: 0.978102
+2025-01-10 22:56:25,700   INFO  	- Car: 0.978102
+2025-01-10 22:56:25,700   INFO  positive_point_L1S1: 16.335633
+2025-01-10 22:56:25,700   INFO  recall_point_L1S1: 0.967466
+2025-01-10 22:56:25,700   INFO  	- Car: 0.967466
+2025-01-10 22:56:25,701   INFO  positive_point_L2S0: 16.773149
+2025-01-10 22:56:25,701   INFO  recall_point_L2S0: 0.964199
+2025-01-10 22:56:25,701   INFO  	- Car: 0.964199
+2025-01-10 22:56:25,701   INFO  positive_point_L2S1: 7.009286
+2025-01-10 22:56:25,701   INFO  recall_point_L2S1: 0.917136
+2025-01-10 22:56:25,701   INFO  	- Car: 0.917136
+2025-01-10 22:56:25,701   INFO  positive_point_candidate: 16.773149
+2025-01-10 22:56:25,701   INFO  recall_point_candidate: 0.964199
+2025-01-10 22:56:25,701   INFO  	- Car: 0.964199
+2025-01-10 22:56:25,701   INFO  positive_point_vote: 37.612364
+2025-01-10 22:56:25,701   INFO  recall_point_vote: 0.980674
+2025-01-10 22:56:25,701   INFO  	- Car: 0.980674
+2025-01-10 22:56:25,701   INFO  positive_point_candidate: 16.773149
+2025-01-10 22:56:25,701   INFO  recall_point_candidate: 0.964199
+2025-01-10 22:56:25,701   INFO  	- Car: 0.964199
+2025-01-10 22:56:25,701   INFO  positive_point_vote: 37.612364
+2025-01-10 22:56:25,701   INFO  recall_point_vote: 0.980674
+2025-01-10 22:56:25,701   INFO  	- Car: 0.980674
+2025-01-10 22:56:25,704   INFO  Average predicted number of objects(3769 samples): 5.278
+2025-01-10 22:56:32,004   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:96.8673, 89.9669, 89.2812
+bev  AP:90.2183, 88.3721, 87.0483
+3d   AP:89.0503, 79.0325, 77.9834
+aos  AP:96.82, 89.91, 89.16
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:98.5112, 95.1681, 92.6532
+bev  AP:95.1261, 91.1597, 88.7085
+3d   AP:91.6594, 82.7919, 80.0208
+aos  AP:98.48, 95.07, 92.50
+Car AP@0.70, 0.50, 0.50:
+bbox AP:96.8673, 89.9669, 89.2812
+bev  AP:96.9311, 90.0404, 89.4845
+3d   AP:96.8594, 90.0030, 89.4165
+aos  AP:96.82, 89.91, 89.16
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:98.5112, 95.1681, 92.6532
+bev  AP:98.5376, 95.4770, 94.9094
+3d   AP:98.4927, 95.3918, 94.7521
+aos  AP:98.48, 95.07, 92.50
+
+2025-01-10 22:56:32,006   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/eval/eval_with_train/epoch_75/val
+2025-01-10 22:56:32,006   INFO  ****************Evaluation done.*****************
+2025-01-10 22:56:32,025   INFO  Epoch 75 has been evaluated
+2025-01-10 22:56:32,026   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/ckpt/checkpoint_epoch_76.pth to GPU
+2025-01-10 22:56:32,075   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60
+2025-01-10 22:56:32,433   INFO  ==> Done (loaded 253/253)
+2025-01-10 22:56:32,436   INFO  *************** EPOCH 76 EVALUATION *****************
+2025-01-10 23:00:12,152   INFO  *************** Performance of EPOCH 76 *****************
+2025-01-10 23:00:12,153   INFO  Generate label finished(sec_per_example: 0.0583 second).
+2025-01-10 23:00:12,153   INFO  recall_roi_0.3: 0.000000
+2025-01-10 23:00:12,153   INFO  recall_rcnn_0.3: 0.942162
+2025-01-10 23:00:12,153   INFO  recall_roi_0.5: 0.000000
+2025-01-10 23:00:12,153   INFO  recall_rcnn_0.5: 0.925895
+2025-01-10 23:00:12,153   INFO  recall_roi_0.7: 0.000000
+2025-01-10 23:00:12,153   INFO  recall_rcnn_0.7: 0.777546
+2025-01-10 23:00:12,153   INFO  positive_point_L0S0: 180.375696
+2025-01-10 23:00:12,153   INFO  recall_point_L0S0: 0.983455
+2025-01-10 23:00:12,153   INFO  	- Car: 0.983455
+2025-01-10 23:00:12,153   INFO  positive_point_L1S0: 34.322101
+2025-01-10 23:00:12,153   INFO  recall_point_L1S0: 0.979075
+2025-01-10 23:00:12,153   INFO  	- Car: 0.979075
+2025-01-10 23:00:12,153   INFO  positive_point_L1S1: 16.338286
+2025-01-10 23:00:12,153   INFO  recall_point_L1S1: 0.968926
+2025-01-10 23:00:12,153   INFO  	- Car: 0.968926
+2025-01-10 23:00:12,153   INFO  positive_point_L2S0: 16.784028
+2025-01-10 23:00:12,153   INFO  recall_point_L2S0: 0.964546
+2025-01-10 23:00:12,153   INFO  	- Car: 0.964546
+2025-01-10 23:00:12,153   INFO  positive_point_L2S1: 7.003980
+2025-01-10 23:00:12,153   INFO  recall_point_L2S1: 0.917970
+2025-01-10 23:00:12,153   INFO  	- Car: 0.917970
+2025-01-10 23:00:12,153   INFO  positive_point_candidate: 16.784028
+2025-01-10 23:00:12,154   INFO  recall_point_candidate: 0.964546
+2025-01-10 23:00:12,154   INFO  	- Car: 0.964546
+2025-01-10 23:00:12,154   INFO  positive_point_vote: 37.653224
+2025-01-10 23:00:12,154   INFO  recall_point_vote: 0.981300
+2025-01-10 23:00:12,154   INFO  	- Car: 0.981300
+2025-01-10 23:00:12,154   INFO  positive_point_candidate: 16.784028
+2025-01-10 23:00:12,154   INFO  recall_point_candidate: 0.964546
+2025-01-10 23:00:12,154   INFO  	- Car: 0.964546
+2025-01-10 23:00:12,154   INFO  positive_point_vote: 37.653224
+2025-01-10 23:00:12,154   INFO  recall_point_vote: 0.981300
+2025-01-10 23:00:12,154   INFO  	- Car: 0.981300
+2025-01-10 23:00:12,156   INFO  Average predicted number of objects(3769 samples): 5.286
+2025-01-10 23:00:19,494   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:96.6743, 89.8106, 89.2418
+bev  AP:90.2345, 88.3633, 87.2945
+3d   AP:88.6062, 78.8198, 77.9305
+aos  AP:96.64, 89.76, 89.10
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:98.3177, 95.0082, 92.5958
+bev  AP:95.1599, 91.2606, 88.8123
+3d   AP:91.1609, 82.6357, 79.9624
+aos  AP:98.29, 94.92, 92.43
+Car AP@0.70, 0.50, 0.50:
+bbox AP:96.6743, 89.8106, 89.2418
+bev  AP:96.7300, 95.9759, 89.4545
+3d   AP:96.6885, 89.9133, 89.4202
+aos  AP:96.64, 89.76, 89.10
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:98.3177, 95.0082, 92.5958
+bev  AP:98.3292, 96.9792, 94.8691
+3d   AP:98.3083, 95.2500, 94.7680
+aos  AP:98.29, 94.92, 92.43
+
+2025-01-10 23:00:19,495   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/eval/eval_with_train/epoch_76/val
+2025-01-10 23:00:19,495   INFO  ****************Evaluation done.*****************
+2025-01-10 23:00:19,518   INFO  Epoch 76 has been evaluated
+2025-01-10 23:00:19,519   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/ckpt/checkpoint_epoch_77.pth to GPU
+2025-01-10 23:00:19,571   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60
+2025-01-10 23:00:19,973   INFO  ==> Done (loaded 253/253)
+2025-01-10 23:00:19,976   INFO  *************** EPOCH 77 EVALUATION *****************
+2025-01-10 23:04:00,451   INFO  *************** Performance of EPOCH 77 *****************
+2025-01-10 23:04:00,452   INFO  Generate label finished(sec_per_example: 0.0585 second).
+2025-01-10 23:04:00,452   INFO  recall_roi_0.3: 0.000000
+2025-01-10 23:04:00,452   INFO  recall_rcnn_0.3: 0.941258
+2025-01-10 23:04:00,452   INFO  recall_roi_0.5: 0.000000
+2025-01-10 23:04:00,452   INFO  recall_rcnn_0.5: 0.925061
+2025-01-10 23:04:00,452   INFO  recall_roi_0.7: 0.000000
+2025-01-10 23:04:00,452   INFO  recall_rcnn_0.7: 0.778519
+2025-01-10 23:04:00,452   INFO  positive_point_L0S0: 180.334837
+2025-01-10 23:04:00,452   INFO  recall_point_L0S0: 0.983594
+2025-01-10 23:04:00,453   INFO  	- Car: 0.983594
+2025-01-10 23:04:00,453   INFO  positive_point_L1S0: 33.957548
+2025-01-10 23:04:00,453   INFO  recall_point_L1S0: 0.978797
+2025-01-10 23:04:00,453   INFO  	- Car: 0.978797
+2025-01-10 23:04:00,453   INFO  positive_point_L1S1: 16.401698
+2025-01-10 23:04:00,453   INFO  recall_point_L1S1: 0.968787
+2025-01-10 23:04:00,453   INFO  	- Car: 0.968787
+2025-01-10 23:04:00,453   INFO  positive_point_L2S0: 16.608384
+2025-01-10 23:04:00,453   INFO  recall_point_L2S0: 0.962669
+2025-01-10 23:04:00,453   INFO  	- Car: 0.962669
+2025-01-10 23:04:00,453   INFO  positive_point_L2S1: 7.057310
+2025-01-10 23:04:00,454   INFO  recall_point_L2S1: 0.921307
+2025-01-10 23:04:00,454   INFO  	- Car: 0.921307
+2025-01-10 23:04:00,454   INFO  positive_point_candidate: 16.608384
+2025-01-10 23:04:00,454   INFO  recall_point_candidate: 0.962669
+2025-01-10 23:04:00,454   INFO  	- Car: 0.962669
+2025-01-10 23:04:00,454   INFO  positive_point_vote: 37.795171
+2025-01-10 23:04:00,454   INFO  recall_point_vote: 0.980883
+2025-01-10 23:04:00,454   INFO  	- Car: 0.980883
+2025-01-10 23:04:00,454   INFO  positive_point_candidate: 16.608384
+2025-01-10 23:04:00,454   INFO  recall_point_candidate: 0.962669
+2025-01-10 23:04:00,454   INFO  	- Car: 0.962669
+2025-01-10 23:04:00,454   INFO  positive_point_vote: 37.795171
+2025-01-10 23:04:00,454   INFO  recall_point_vote: 0.980883
+2025-01-10 23:04:00,454   INFO  	- Car: 0.980883
+2025-01-10 23:04:00,456   INFO  Average predicted number of objects(3769 samples): 5.257
+2025-01-10 23:04:05,959   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:96.7587, 89.7803, 89.1625
+bev  AP:90.1441, 88.3256, 87.3376
+3d   AP:88.5129, 78.7226, 77.8512
+aos  AP:96.72, 89.72, 89.03
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:98.2142, 94.9442, 92.5307
+bev  AP:95.0224, 91.2868, 88.8520
+3d   AP:91.1225, 82.5317, 79.9169
+aos  AP:98.19, 94.85, 92.37
+Car AP@0.70, 0.50, 0.50:
+bbox AP:96.7587, 89.7803, 89.1625
+bev  AP:96.8660, 89.9104, 89.3976
+3d   AP:96.8190, 89.8889, 89.3513
+aos  AP:96.72, 89.72, 89.03
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:98.2142, 94.9442, 92.5307
+bev  AP:98.2814, 95.2797, 94.8206
+3d   AP:98.2535, 95.2197, 94.7014
+aos  AP:98.19, 94.85, 92.37
+
+2025-01-10 23:04:05,960   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/eval/eval_with_train/epoch_77/val
+2025-01-10 23:04:05,960   INFO  ****************Evaluation done.*****************
+2025-01-10 23:04:05,979   INFO  Epoch 77 has been evaluated
+2025-01-10 23:04:05,979   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/ckpt/checkpoint_epoch_78.pth to GPU
+2025-01-10 23:04:06,027   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60
+2025-01-10 23:04:06,351   INFO  ==> Done (loaded 253/253)
+2025-01-10 23:04:06,354   INFO  *************** EPOCH 78 EVALUATION *****************
+2025-01-10 23:07:46,638   INFO  *************** Performance of EPOCH 78 *****************
+2025-01-10 23:07:46,639   INFO  Generate label finished(sec_per_example: 0.0584 second).
+2025-01-10 23:07:46,639   INFO  recall_roi_0.3: 0.000000
+2025-01-10 23:07:46,639   INFO  recall_rcnn_0.3: 0.946194
+2025-01-10 23:07:46,639   INFO  recall_roi_0.5: 0.000000
+2025-01-10 23:07:46,639   INFO  recall_rcnn_0.5: 0.930275
+2025-01-10 23:07:46,639   INFO  recall_roi_0.7: 0.000000
+2025-01-10 23:07:46,639   INFO  recall_rcnn_0.7: 0.779840
+2025-01-10 23:07:46,639   INFO  positive_point_L0S0: 180.302733
+2025-01-10 23:07:46,639   INFO  recall_point_L0S0: 0.983455
+2025-01-10 23:07:46,639   INFO  	- Car: 0.983455
+2025-01-10 23:07:46,639   INFO  positive_point_L1S0: 34.337755
+2025-01-10 23:07:46,639   INFO  recall_point_L1S0: 0.979075
+2025-01-10 23:07:46,639   INFO  	- Car: 0.979075
+2025-01-10 23:07:46,639   INFO  positive_point_L1S1: 16.377819
+2025-01-10 23:07:46,639   INFO  recall_point_L1S1: 0.968092
+2025-01-10 23:07:46,639   INFO  	- Car: 0.968092
+2025-01-10 23:07:46,639   INFO  positive_point_L2S0: 17.013266
+2025-01-10 23:07:46,639   INFO  recall_point_L2S0: 0.965103
+2025-01-10 23:07:46,639   INFO  	- Car: 0.965103
+2025-01-10 23:07:46,639   INFO  positive_point_L2S1: 7.036614
+2025-01-10 23:07:46,639   INFO  recall_point_L2S1: 0.918318
+2025-01-10 23:07:46,639   INFO  	- Car: 0.918318
+2025-01-10 23:07:46,639   INFO  positive_point_candidate: 17.013266
+2025-01-10 23:07:46,639   INFO  recall_point_candidate: 0.965103
+2025-01-10 23:07:46,639   INFO  	- Car: 0.965103
+2025-01-10 23:07:46,639   INFO  positive_point_vote: 37.927567
+2025-01-10 23:07:46,639   INFO  recall_point_vote: 0.981369
+2025-01-10 23:07:46,639   INFO  	- Car: 0.981369
+2025-01-10 23:07:46,639   INFO  positive_point_candidate: 17.013266
+2025-01-10 23:07:46,639   INFO  recall_point_candidate: 0.965103
+2025-01-10 23:07:46,639   INFO  	- Car: 0.965103
+2025-01-10 23:07:46,640   INFO  positive_point_vote: 37.927567
+2025-01-10 23:07:46,640   INFO  recall_point_vote: 0.981369
+2025-01-10 23:07:46,640   INFO  	- Car: 0.981369
+2025-01-10 23:07:46,642   INFO  Average predicted number of objects(3769 samples): 5.595
+2025-01-10 23:07:53,146   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:96.3228, 89.7649, 89.2000
+bev  AP:90.2418, 88.4078, 87.2836
+3d   AP:88.9350, 79.1432, 78.2990
+aos  AP:96.28, 89.68, 89.06
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:97.9907, 94.8383, 92.4620
+bev  AP:94.9418, 91.1495, 88.7996
+3d   AP:91.5810, 82.9074, 80.2721
+aos  AP:97.96, 94.73, 92.29
+Car AP@0.70, 0.50, 0.50:
+bbox AP:96.3228, 89.7649, 89.2000
+bev  AP:96.4002, 89.8573, 89.3969
+3d   AP:96.3447, 89.8389, 89.3496
+aos  AP:96.28, 89.68, 89.06
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:97.9907, 94.8383, 92.4620
+bev  AP:98.0715, 95.1454, 94.7148
+3d   AP:98.0080, 95.0891, 94.6036
+aos  AP:97.96, 94.73, 92.29
+
+2025-01-10 23:07:53,147   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/eval/eval_with_train/epoch_78/val
+2025-01-10 23:07:53,147   INFO  ****************Evaluation done.*****************
+2025-01-10 23:07:53,167   INFO  Epoch 78 has been evaluated
+2025-01-10 23:07:53,167   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/ckpt/checkpoint_epoch_79.pth to GPU
+2025-01-10 23:07:53,215   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60
+2025-01-10 23:07:53,577   INFO  ==> Done (loaded 253/253)
+2025-01-10 23:07:53,581   INFO  *************** EPOCH 79 EVALUATION *****************
+2025-01-10 23:11:33,945   INFO  *************** Performance of EPOCH 79 *****************
+2025-01-10 23:11:33,945   INFO  Generate label finished(sec_per_example: 0.0585 second).
+2025-01-10 23:11:33,945   INFO  recall_roi_0.3: 0.000000
+2025-01-10 23:11:33,945   INFO  recall_rcnn_0.3: 0.942996
+2025-01-10 23:11:33,945   INFO  recall_roi_0.5: 0.000000
+2025-01-10 23:11:33,946   INFO  recall_rcnn_0.5: 0.925408
+2025-01-10 23:11:33,946   INFO  recall_roi_0.7: 0.000000
+2025-01-10 23:11:33,946   INFO  recall_rcnn_0.7: 0.777198
+2025-01-10 23:11:33,946   INFO  positive_point_L0S0: 180.391616
+2025-01-10 23:11:33,946   INFO  recall_point_L0S0: 0.983455
+2025-01-10 23:11:33,946   INFO  	- Car: 0.983455
+2025-01-10 23:11:33,946   INFO  positive_point_L1S0: 33.503582
+2025-01-10 23:11:33,946   INFO  recall_point_L1S0: 0.978033
+2025-01-10 23:11:33,946   INFO  	- Car: 0.978033
+2025-01-10 23:11:33,946   INFO  positive_point_L1S1: 16.369063
+2025-01-10 23:11:33,947   INFO  recall_point_L1S1: 0.968092
+2025-01-10 23:11:33,947   INFO  	- Car: 0.968092
+2025-01-10 23:11:33,947   INFO  positive_point_L2S0: 16.406474
+2025-01-10 23:11:33,947   INFO  recall_point_L2S0: 0.963851
+2025-01-10 23:11:33,947   INFO  	- Car: 0.963851
+2025-01-10 23:11:33,947   INFO  positive_point_L2S1: 7.069514
+2025-01-10 23:11:33,947   INFO  recall_point_L2S1: 0.920473
+2025-01-10 23:11:33,947   INFO  	- Car: 0.920473
+2025-01-10 23:11:33,947   INFO  positive_point_candidate: 16.406474
+2025-01-10 23:11:33,947   INFO  recall_point_candidate: 0.963851
+2025-01-10 23:11:33,948   INFO  	- Car: 0.963851
+2025-01-10 23:11:33,948   INFO  positive_point_vote: 37.665959
+2025-01-10 23:11:33,948   INFO  recall_point_vote: 0.981230
+2025-01-10 23:11:33,948   INFO  	- Car: 0.981230
+2025-01-10 23:11:33,948   INFO  positive_point_candidate: 16.406474
+2025-01-10 23:11:33,948   INFO  recall_point_candidate: 0.963851
+2025-01-10 23:11:33,948   INFO  	- Car: 0.963851
+2025-01-10 23:11:33,948   INFO  positive_point_vote: 37.665959
+2025-01-10 23:11:33,948   INFO  recall_point_vote: 0.981230
+2025-01-10 23:11:33,948   INFO  	- Car: 0.981230
+2025-01-10 23:11:33,951   INFO  Average predicted number of objects(3769 samples): 5.352
+2025-01-10 23:11:39,436   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:96.5849, 89.9371, 89.3653
+bev  AP:90.3013, 88.5623, 87.4649
+3d   AP:88.9505, 79.1106, 78.1115
+aos  AP:96.54, 89.88, 89.23
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:98.4078, 95.1383, 92.6771
+bev  AP:95.3615, 91.4820, 88.9751
+3d   AP:91.6008, 82.9108, 80.1633
+aos  AP:98.38, 95.05, 92.52
+Car AP@0.70, 0.50, 0.50:
+bbox AP:96.5849, 89.9371, 89.3653
+bev  AP:96.6686, 96.0060, 89.5518
+3d   AP:96.6018, 90.0214, 89.5021
+aos  AP:96.54, 89.88, 89.23
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:98.4078, 95.1383, 92.6771
+bev  AP:98.4411, 97.1033, 94.9739
+3d   AP:98.4125, 95.3621, 94.8464
+aos  AP:98.38, 95.05, 92.52
+
+2025-01-10 23:11:39,437   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/eval/eval_with_train/epoch_79/val
+2025-01-10 23:11:39,437   INFO  ****************Evaluation done.*****************
+2025-01-10 23:11:39,458   INFO  Epoch 79 has been evaluated
+2025-01-10 23:11:39,459   INFO  ==> Loading parameters from checkpoint /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/ckpt/checkpoint_epoch_80.pth to GPU
+2025-01-10 23:11:39,509   INFO  ==> Checkpoint trained from version: pcdet+0.3.0+cd79f60
+2025-01-10 23:11:39,915   INFO  ==> Done (loaded 253/253)
+2025-01-10 23:11:39,919   INFO  *************** EPOCH 80 EVALUATION *****************
+2025-01-10 23:15:19,549   INFO  *************** Performance of EPOCH 80 *****************
+2025-01-10 23:15:19,549   INFO  Generate label finished(sec_per_example: 0.0583 second).
+2025-01-10 23:15:19,549   INFO  recall_roi_0.3: 0.000000
+2025-01-10 23:15:19,549   INFO  recall_rcnn_0.3: 0.944456
+2025-01-10 23:15:19,549   INFO  recall_roi_0.5: 0.000000
+2025-01-10 23:15:19,549   INFO  recall_rcnn_0.5: 0.926868
+2025-01-10 23:15:19,549   INFO  recall_roi_0.7: 0.000000
+2025-01-10 23:15:19,549   INFO  recall_rcnn_0.7: 0.775252
+2025-01-10 23:15:19,549   INFO  positive_point_L0S0: 180.394269
+2025-01-10 23:15:19,549   INFO  recall_point_L0S0: 0.983385
+2025-01-10 23:15:19,549   INFO  	- Car: 0.983385
+2025-01-10 23:15:19,549   INFO  positive_point_L1S0: 33.586628
+2025-01-10 23:15:19,549   INFO  recall_point_L1S0: 0.978241
+2025-01-10 23:15:19,549   INFO  	- Car: 0.978241
+2025-01-10 23:15:19,549   INFO  positive_point_L1S1: 16.380472
+2025-01-10 23:15:19,549   INFO  recall_point_L1S1: 0.968787
+2025-01-10 23:15:19,549   INFO  	- Car: 0.968787
+2025-01-10 23:15:19,549   INFO  positive_point_L2S0: 16.656938
+2025-01-10 23:15:19,549   INFO  recall_point_L2S0: 0.964199
+2025-01-10 23:15:19,549   INFO  	- Car: 0.964199
+2025-01-10 23:15:19,549   INFO  positive_point_L2S1: 7.032104
+2025-01-10 23:15:19,549   INFO  recall_point_L2S1: 0.918179
+2025-01-10 23:15:19,549   INFO  	- Car: 0.918179
+2025-01-10 23:15:19,549   INFO  positive_point_candidate: 16.656938
+2025-01-10 23:15:19,549   INFO  recall_point_candidate: 0.964199
+2025-01-10 23:15:19,549   INFO  	- Car: 0.964199
+2025-01-10 23:15:19,550   INFO  positive_point_vote: 37.758026
+2025-01-10 23:15:19,550   INFO  recall_point_vote: 0.980813
+2025-01-10 23:15:19,550   INFO  	- Car: 0.980813
+2025-01-10 23:15:19,550   INFO  positive_point_candidate: 16.656938
+2025-01-10 23:15:19,550   INFO  recall_point_candidate: 0.964199
+2025-01-10 23:15:19,550   INFO  	- Car: 0.964199
+2025-01-10 23:15:19,550   INFO  positive_point_vote: 37.758026
+2025-01-10 23:15:19,550   INFO  recall_point_vote: 0.980813
+2025-01-10 23:15:19,550   INFO  	- Car: 0.980813
+2025-01-10 23:15:19,552   INFO  Average predicted number of objects(3769 samples): 5.458
+2025-01-10 23:15:25,509   INFO  Car AP@0.70, 0.70, 0.70:
+bbox AP:96.6303, 89.8601, 89.2231
+bev  AP:90.1650, 88.3721, 87.2458
+3d   AP:88.8634, 78.9477, 78.0350
+aos  AP:96.59, 89.79, 89.10
+Car AP_R40@0.70, 0.70, 0.70:
+bbox AP:98.2676, 95.0057, 92.5373
+bev  AP:95.1056, 91.2226, 88.7855
+3d   AP:91.4175, 82.7117, 80.0564
+aos  AP:98.24, 94.91, 92.39
+Car AP@0.70, 0.50, 0.50:
+bbox AP:96.6303, 89.8601, 89.2231
+bev  AP:96.7127, 89.9460, 89.4696
+3d   AP:96.6540, 89.9232, 89.4066
+aos  AP:96.59, 89.79, 89.10
+Car AP_R40@0.70, 0.50, 0.50:
+bbox AP:98.2676, 95.0057, 92.5373
+bev  AP:98.3097, 95.2831, 94.8271
+3d   AP:98.2736, 95.2167, 94.6870
+aos  AP:98.24, 94.91, 92.39
+
+2025-01-10 23:15:25,510   INFO  Result is save to /home/ubuntu/codes/2025codes/SASA/output/kitti_models/3dssd/default/eval/eval_with_train/epoch_80/val
+2025-01-10 23:15:25,510   INFO  ****************Evaluation done.*****************
+2025-01-10 23:15:25,530   INFO  Epoch 80 has been evaluated
+2025-01-10 23:15:55,642   INFO  **********************End evaluation kitti_models/3dssd(default)**********************

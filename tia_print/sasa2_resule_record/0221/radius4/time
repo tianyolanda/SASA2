@@ -1,0 +1,19 @@
+train:   0%|          | 1/3712 [00:24<25:06:59, 24.37s/it]
+epochs:   0%|          | 0/80 [00:25<?, ?it/s, loss=15.8, lr=0.001]---time---cnt_ball_points(radius=1, nsample=500): 0.00010704994201660156
+---time---cnt_ball_points(radius=1, nsample=500): 5.245208740234375e-05
+
+train:   0%|          | 2/3712 [00:58<30:55:41, 30.01s/it, total_it=1]
+epochs:   0%|          | 0/80 [00:59<?, ?it/s, loss=16.1, lr=0.001]---time---cnt_ball_points(radius=1, nsample=500): 7.82012939453125e-05
+---time---cnt_ball_points(radius=1, nsample=500): 5.054473876953125e-05
+
+train:   0%|          | 3/3712 [01:12<23:17:10, 22.60s/it, total_it=2]
+epochs:   0%|          | 0/80 [01:12<?, ?it/s, loss=14.8, lr=0.001]---time---cnt_ball_points(radius=1, nsample=500): 5.7697296142578125e-05
+---time---cnt_ball_points(radius=1, nsample=500): 4.839897155761719e-05
+
+train:   0%|          | 4/3712 [03:00<58:10:08, 56.47s/it, total_it=3]
+epochs:   0%|          | 0/80 [03:01<?, ?it/s, loss=14.8, lr=0.001]---time---cnt_ball_points(radius=1, nsample=500): 5.817413330078125e-05
+---time---cnt_ball_points(radius=1, nsample=500): 5.030632019042969e-05
+
+train:   0%|          | 5/3712 [03:02<37:51:58, 36.77s/it, total_it=4]
+epochs:   0%|          | 0/80 [03:03<?, ?it/s, loss=15.7, lr=0.001]---time---cnt_ball_points(radius=1, nsample=500): 6.67572021484375e-05
+---time---cnt_ball_points(radius=1, nsample=500): 4.792213439941406e-05

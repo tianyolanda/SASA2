@@ -613,6 +613,8 @@ class _PointnetSAModuleFSBasewD(nn.Module):
                     # vis_weight_distribution(scores_slice_0.detach(), scores_slice.detach())
                     # vis_weight_distribution(scores_slice.detach(), scores_slice.detach()*density_factor)
 
+                    aa =density_factor*scores_slice
+                    print(aa.shape)
                     sample_idx = pointnet2_utils.furthest_point_sample_weights_density(
                         xyz_slice,
                         scores_slice,

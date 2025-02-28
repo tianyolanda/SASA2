@@ -1,0 +1,37 @@
+                    print('points',points.shape)
+                    print('pts_rect',pts_rect.shape)
+                    print('pts_fov',pts_fov.shape)
+                    print('num_points_in_gt',num_points_in_gt)
+
+train sample_idx: 000238
+points (124197, 4)
+pts_rect (124197, 3)
+pts_fov (20395, 4)
+num_points_in_gt [93 46 -1 -1]
+train sample_idx: 000240
+points (122306, 4)
+pts_rect (122306, 3)
+pts_fov (19304, 4)
+num_points_in_gt [ 80 339  61  -1  -1  -1]
+train sample_idx: 000241
+points (115892, 4)
+pts_rect (115892, 3)
+pts_fov (17627, 4)
+num_points_in_gt [45 63 85 58 49 -1 -1 -1 -1 -1]
+train sample_idx: 000243
+points (123439, 4)
+pts_rect (123439, 3)
+pts_fov (19269, 4)
+num_points_in_gt [56  9 74 -1 -1 -1 -1]
+train sample_idx: 000244
+points (124735, 4)
+pts_rect (124735, 3)
+pts_fov (20361, 4)
+num_points_in_gt [304  12  -1]
+train sample_idx: 000245
+points (127593, 4)
+pts_rect (127593, 3)
+pts_fov (20150, 4)
+num_points_in_gt [93 -1]
+train sample_idx: 000253
+
