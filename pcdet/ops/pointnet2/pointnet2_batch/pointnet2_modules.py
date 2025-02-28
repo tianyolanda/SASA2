@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
 from . import pointnet2_utils
+from pcdet.utils.density_calculation import vis3d_pyvista
 
 def min_max_normalize(tensor):
     # 最大-最小归一化（对每个 batch 分别计算 max 和 min）
@@ -613,8 +614,15 @@ class _PointnetSAModuleFSBasewD(nn.Module):
                     # vis_weight_distribution(scores_slice_0.detach(), scores_slice.detach())
                     # vis_weight_distribution(scores_slice.detach(), scores_slice.detach()*density_factor)
 
-                    aa =density_factor*scores_slice
-                    print(aa.shape)
+                    # aa =density_factor*scores_slice
+                    # aa =scores_slice
+                    # aa =density_factor
+                    # print(aa.shape)
+                    # torch.Size([2, 4096])
+                    # torch.Size([2, 512])
+                    # print(xyz_slice.shape)
+                    # vis3d_pyvista(xyz_slice.detach(), aa.detach())
+
                     sample_idx = pointnet2_utils.furthest_point_sample_weights_density(
                         xyz_slice,
                         scores_slice,

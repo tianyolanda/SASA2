@@ -43,7 +43,8 @@ def vis3d_pyvista(points,feature):
         plotter = pv.Plotter()
         # 设置背景颜色为白色
         plotter.set_background("white")
-        plotter.add_mesh(cloud, scalars="intensity", cmap="viridis", point_size=2)
+        plotter.add_mesh(cloud, scalars="intensity", cmap="YlOrBr", point_size=3)
+        # cmap change: https://matplotlib.org/stable/users/explain/colors/colormaps.html
         plotter.show()
     else:
         print('the shape of points is incorrect!')
