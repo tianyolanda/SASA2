@@ -52,6 +52,12 @@ class Point3DSSD(Detector3DTemplate):
             for cur_seg in range(len(npoint_list[cur_layer])):
                 metric['positive_point_L%dS%d' % (cur_layer, cur_seg)] = 0
                 metric['recall_point_L%dS%d' % (cur_layer, cur_seg)] = 0
+                metric['positive_num_point_in_far_boxes_L%dS%d' % (cur_layer, cur_seg)] = 0
+                metric['positive_num_point_in_mid_boxes_L%dS%d' % (cur_layer, cur_seg)] = 0
+                metric['positive_num_point_in_close_boxes_L%dS%d' % (cur_layer, cur_seg)] = 0
+                metric['recall_gt_box_of_far_boxes_L%dS%d' % (cur_layer, cur_seg)] = 0
+                metric['recall_gt_box_of_mid_boxes_L%dS%d' % (cur_layer, cur_seg)] = 0
+                metric['recall_gt_box_of_close_boxes_L%dS%d' % (cur_layer, cur_seg)] = 0
                 for cur_cls in range(self.num_class):
                     metric['recall_point_L%dS%d[%s]' \
                         % (cur_layer, cur_seg, self.class_names[cur_cls])] = 0
@@ -110,19 +116,76 @@ class Point3DSSD(Detector3DTemplate):
             # backbone
             for cur_layer in range(len(npoint_list)):
                 for cur_seg in range(len(npoint_list[cur_layer])):
+                    points_in_far_boxes = 0  # (50, :)
+                    points_in_mid_boxes = 0  # (20,50)
+                    points_in_close_boxes = 0  # (0, 20)
+                    close_boxes = 0
+                    mid_boxes = 0
+                    far_boxes =0
+
                     box_idxs_of_pts = roiaware_pool3d_utils.points_in_boxes_gpu(
                         cur_points_list[cur_layer][cur_seg].unsqueeze(dim=0),
                         cur_gt[None, :, :7].contiguous()
                     ).long().squeeze(dim=0)
                     box_fg_flag = (box_idxs_of_pts >= 0)
                     recall_dict['positive_point_L%dS%d' % (cur_layer, cur_seg)] += box_fg_flag.long().sum().item()
+                    fg_points_num = box_fg_flag.long().sum().item()
+
                     box_recalled = box_idxs_of_pts[box_fg_flag].unique()
                     recall_dict['recall_point_L%dS%d' % (cur_layer, cur_seg)] += box_recalled.size(0)
-
                     box_recalled_cls = cur_gt[box_recalled, -1]
                     for cur_cls in range(self.num_class):
                         recall_dict['recall_point_L%dS%d[%s]' % (cur_layer, cur_seg, self.class_names[cur_cls])] += \
                             (box_recalled_cls == (cur_cls + 1)).sum().item()
+
+                    num_of_gts = box_idxs_of_pts.max()
+                    for i in range(num_of_gts+1):
+                        flag_of_current_gt = (box_idxs_of_pts == i)
+                        point_num_of_current_gt = flag_of_current_gt.long().sum().item()
+                        x = cur_gt[i][0]
+                        y = cur_gt[i][1]
+                        distance_of_cur_gt =  x*x +y*y
+                        if distance_of_cur_gt < 400:
+                            recall_dict['positive_num_point_in_close_boxes_L%dS%d' % (cur_layer, cur_seg)] += point_num_of_current_gt
+                            points_in_close_boxes += point_num_of_current_gt
+                        elif distance_of_cur_gt < 2500:
+                            recall_dict['positive_num_point_in_mid_boxes_L%dS%d' % (cur_layer, cur_seg)] += point_num_of_current_gt
+                            points_in_mid_boxes += point_num_of_current_gt
+                        else:
+                            recall_dict['positive_num_point_in_far_boxes_L%dS%d' % (cur_layer, cur_seg)] += point_num_of_current_gt
+                            points_in_far_boxes += point_num_of_current_gt
+
+                    for i in range(num_of_gts+1):
+                        flag_of_current_gt = (box_idxs_of_pts == i)
+                        point_num_of_current_gt = flag_of_current_gt.long().sum().item()
+                        if point_num_of_current_gt >0:
+                            x = cur_gt[i][0]
+                            y = cur_gt[i][1]
+                            distance_of_cur_gt =  x*x +y*y
+                            if distance_of_cur_gt < 400:
+                                recall_dict['recall_gt_box_of_close_boxes_L%dS%d' % (cur_layer, cur_seg)] += 1
+                                close_boxes += 1
+                            elif distance_of_cur_gt < 2500:
+                                recall_dict['recall_gt_box_of_mid_boxes_L%dS%d' % (cur_layer, cur_seg)] += 1
+                                mid_boxes += 1
+                            else:
+                                recall_dict['recall_gt_box_of_far_boxes_L%dS%d' % (cur_layer, cur_seg)] += 1
+                                far_boxes += 1
+
+                        # print(cur_layer, cur_seg, i, point_num_of_current_gt, close_boxes, mid_boxes, far_boxes)
+
+
+                    # all_points_num = points_in_close_boxes+ points_in_mid_boxes+ points_in_far_boxes,
+                    # print(num_of_gts, points_in_close_boxes, points_in_mid_boxes, points_in_far_boxes,all_points_num,fg_points_num)
+                    # a = 'positive_num_point_in_close_boxes_L%dS%d' % (cur_layer, cur_seg)
+                    # print(a,recall_dict['positive_num_point_in_close_boxes_L%dS%d' % (cur_layer, cur_seg)])
+                    # b = 'positive_num_point_in_mid_boxes_L%dS%d' % (cur_layer, cur_seg)
+                    # print(b,recall_dict['positive_num_point_in_mid_boxes_L%dS%d' % (cur_layer, cur_seg)])
+                    # c = 'positive_num_point_in_far_boxes_L%dS%d' % (cur_layer, cur_seg)
+                    # print(c,recall_dict['positive_num_point_in_far_boxes_L%dS%d' % (cur_layer, cur_seg)])
+                    # d= 'recall_point_L%dS%d' % (cur_layer, cur_seg)
+                    # print(d, recall_dict['recall_point_L%dS%d' % (cur_layer, cur_seg)])
+                    # print('******')
 
             # candidate points
             box_idxs_of_pts = roiaware_pool3d_utils.points_in_boxes_gpu(
@@ -185,8 +248,28 @@ class Point3DSSD(Detector3DTemplate):
         # backbone
         for k in metric.keys():
             if 'positive_point_' in k:  # count the number of positive points
-                cur_positive_point = metric[k] / sample_num
-                logger.info(k + (': %f' % cur_positive_point))
+                # cur_positive_point = metric[k] / sample_num  # sample num 3769
+                cur_positive_point = metric[k]   # sample num 3769
+                logger.info(k + (': %d' % cur_positive_point))
+            elif 'positive_num_point_in_far_boxes_' in k:  # count the number of positive points
+                cur_positive_point = metric[k]
+                logger.info(k + (': %d' % cur_positive_point))
+            elif 'positive_num_point_in_mid_boxes_' in k:  # count the number of positive points
+                cur_positive_point = metric[k]
+                logger.info(k + (': %d' % cur_positive_point))
+            elif 'positive_num_point_in_close_boxes_' in k:  # count the number of positive points
+                cur_positive_point = metric[k]
+                logger.info(k + (': %d' % cur_positive_point))
+            elif 'recall_gt_box_of_far_boxes_' in k:  # count the number of positive points
+                cur_recall_point = metric[k]
+                logger.info(k + (': %d' % cur_recall_point))
+            elif 'recall_gt_box_of_mid_boxes_' in k:  # count the number of positive points
+                cur_recall_point = metric[k]
+                logger.info(k + (': %d' % cur_recall_point))
+            elif 'recall_gt_box_of_close_boxes_' in k:  # count the number of positive points
+                cur_recall_point = metric[k]
+                logger.info(k + (': %d' % cur_recall_point))
+
             elif 'recall_point_' in k and not any(cur_cls in k for cur_cls in self.class_names):
                 cur_recall_point = metric[k] / max(gt_num, 1)
                 logger.info(k + (': %f' % cur_recall_point))

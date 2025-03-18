@@ -1,3 +1,51 @@
+# pyyaml版本 
+(sasa2) ubuntu@ubuntu-tt:~/codes/2025codes/SASA2/tools$ pip install pyyaml==5.3 Collecting pyyaml==5.3
+  Using cached PyYAML-5.3-cp37-cp37m-linux_x86_64.whl
+Installing collected packages: pyyaml
+  Attempting uninstall: pyyaml
+    Found existing installation: PyYAML 5.4.1
+    Uninstalling PyYAML-5.4.1:
+      Successfully uninstalled PyYAML-5.4.1
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+open3d 0.13.0 requires pyyaml>=5.4.1, but you have pyyaml 5.3 which is incompatible.
+Successfully installed pyyaml-5.3
+
+
+# nuscene 训练
+CUDA_VISIBLE_DEVICES=1 python train.py --cfg_file cfgs/nuscenes_models/3dssd.yaml
+会报错RuntimeError: CUDA out of memory. 
+
+## 尝试多gpu训练
+export OMP_NUM_THREADS=2 
+bash scripts/dist_train2.sh 2 --cfg_file cfgs/nuscenes_models/3dssd.yaml
+会卡住
+
+# 准备数据集nuscene
+python -m pcdet.datasets.nuscenes.nuscenes_dataset --func create_nuscenes_infos   --cfg_file tools/cfgs/dataset_configs/nuscenes_dataset.yaml --version v1.0-mini
+
+## 结果
+======
+total scene num: 10
+exist scene num: 10
+v1.0-mini: train scene(8), val scene(2)
+create_info: 100%|████████████████████████████████████████████████| 404/404 [00:07<00:00, 53.91it/s]
+train sample: 323, val sample: 81
+2025-03-10 11:52:27,892   INFO  Loading NuScenes dataset
+2025-03-10 11:52:27,917   INFO  Total samples for NuScenes dataset: 323
+100%|█████████████████████████████████████████████████████████████| 323/323 [00:41<00:00,  7.82it/s]
+Database pedestrian: 3068
+Database car: 4082
+Database traffic_cone: 773
+Database bicycle: 147
+Database barrier: 1851
+Database truck: 451
+Database bus: 337
+Database construction_vehicle: 174
+Database ignore: 95
+Database motorcycle: 179
+Database trailer: 59
+
+
 #　conda环境
 sasa2
 export PYTHONPATH='/home/ubuntu/codes/2025codes/SASA2'

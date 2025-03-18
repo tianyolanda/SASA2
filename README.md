@@ -21,7 +21,7 @@ Here we present experimental results evaluated on the KITTI *validation* set and
 
 | Method | Easy | Moderate | Hard | download |
 |:-------|:----:|:--------:|:----:|:--------:|
-| [3DSSD](tools/cfgs/kitti_models/3dssd.yaml) | 91.53 | 83.12 | 82.07 | [Google Drive](https://drive.google.com/file/d/1KG5a1MiGGtkgMpMGdn9mGgwpeOAbdwgK/view?usp=sharing)
+| [3DSSD](tools/cfgs/kitti_models/car/3dssd.yaml) | 91.53 | 83.12 | 82.07 | [Google Drive](https://drive.google.com/file/d/1KG5a1MiGGtkgMpMGdn9mGgwpeOAbdwgK/view?usp=sharing)
 | [3DSSD + **SASA**](tools/cfgs/kitti_models/3dssd_sasa.yaml) | **92.34** | **85.91** | **83.08** | [Google Drive](https://drive.google.com/file/d/1VxQ79V0Kp8Gum--rs5HdOe2DHnbcLoo8/view?usp=sharing)
 | [PointRCNN](tools/cfgs/kitti_models/pointrcnn.yaml) | 91.80 | 82.35 | 80.21 | [Google Drive](https://drive.google.com/file/d/1f0RnwOz7zDahdhcHJHxct6BX-Xu0_0sp/view?usp=sharing)
 | [PointRCNN + **SASA**](tools/cfgs/kitti_models/pointrcnn_sasa.yaml) | **92.25** | **82.80** | **82.23** | [Google Drive](https://drive.google.com/file/d/19uUunoeeAAVLJ64Bn1chOPBroHe-5JaN/view?usp=sharing)

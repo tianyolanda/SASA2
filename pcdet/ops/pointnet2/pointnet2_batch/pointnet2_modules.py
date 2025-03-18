@@ -29,8 +29,9 @@ def density_factor_calculation(density, weight):
     :param weight: weight_beta
     :return: density_factor
     '''
-    density = 1-density # (0~1)
+    # density = 1-density # (0~1)
     density_factor = (1 + density ** weight)/2
+    # density_factor =  density ** weight
     return density_factor
 
 def sigmoid_normalize(tensor):

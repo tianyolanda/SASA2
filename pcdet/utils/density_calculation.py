@@ -48,7 +48,7 @@ def vis3d_pyvista(points,feature):
         plotter.show()
     else:
         print('the shape of points is incorrect!')
-def cnt_ball_points(radius=1, nsample=500, points=''):
+def cnt_ball_points(radius, nsample, points=''):
     '''
 
     :param radius: 球半径

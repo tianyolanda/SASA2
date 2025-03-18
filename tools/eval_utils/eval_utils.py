@@ -13,6 +13,7 @@ def statistics_info(cfg, ret_dict, metric, disp_dict):
     for key in metric.keys():
         if key in ret_dict:
             metric[key] += ret_dict[key]
+            # print('----',key, metric[key])
     min_thresh = cfg.MODEL.POST_PROCESSING.RECALL_THRESH_LIST[0]
     disp_dict['recall_%s' % str(min_thresh)] = \
         '(%d, %d) / %d' % (metric['recall_roi_%s' % str(min_thresh)], metric['recall_rcnn_%s' % str(min_thresh)], metric['gt_num'])
