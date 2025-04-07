@@ -26,18 +26,18 @@ DATA_CONFIG:
                 ALONG_AXIS_LIST: [ 'x' ]
 
             -   NAME: random_box_noise
-                ENABLE_PROB: 0.5
-                LOC_NOISE: [ 1.0, 1.0, 0.0 ]
+                ENABLE_PROB: 1
+                LOC_NOISE: [ 0.25, 0.25, 0.25 ]
                 SCALE_RANGE: [ 1.0, 1.0 ]
-                ROTATION_RANGE: [ -1.04719755, 1.04719755 ]
+                ROTATION_RANGE: [ -0.15707963267, 0.15707963267 ]
 
             -   NAME: random_world_rotation
-                ENABLE_PROB: 0.5
+                ENABLE_PROB: 1
                 WORLD_ROT_ANGLE: [ -0.78539816, 0.78539816 ]
 
             -   NAME: random_world_scaling
-                ENABLE_PROB: 0.5
-                WORLD_SCALE_RANGE: [ 0.9, 1.1 ]
+                ENABLE_PROB: 1
+                WORLD_SCALE_RANGE: [ 0.95, 1.05 ]
 
     DATA_PROCESSOR:
         -   NAME: mask_points_and_boxes_outside_range
