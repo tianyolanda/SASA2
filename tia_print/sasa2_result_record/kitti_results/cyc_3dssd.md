@@ -145,6 +145,10 @@ aos  AP:92.55, 78.94, 76.13
     # density_factor = (1 + density ** weight)/2
     
  CUDA_VISIBLE_DEVICES=0 python test.py --cfg_file cfgs/kitti_models/3dssd_dsasa_cyc.yaml --ckpt  ../output/kitti_models/cyc/3dssd_dsasa_0.5/default/ckpt/checkpoint_epoch_80.pth
+ 
+  CUDA_VISIBLE_DEVICES=0 python test.py --cfg_file cfgs/kitti_models/cyc/3dssd_dsasa.yaml --ckpt  ../output/kitti_models/cyc/3dssd_dsasa_0.5/default/ckpt/checkpoint_epoch_80.pth
+
+
     
 ==epoch 80==
 INFO  Cyclist AP@0.50, 0.50, 0.50:
@@ -244,7 +248,7 @@ aos  AP:88.26, 77.44, 73.44
 Cyclist AP_R40@0.50, 0.50, 0.50:
 bbox AP:93.2568, 79.4623, 76.4307
 bev  AP:91.0233, 72.9422, 68.3172
-[3d   AP:88.8091, 69.5390, 65.5218]
+[3d   AP:88.8091, 69.5390, 65.5218] **this one**
 aos  AP:92.92, 78.53, 75.46
 Cyclist AP@0.50, 0.25, 0.25:
 bbox AP:88.5778, 78.2979, 74.2913
@@ -268,7 +272,7 @@ aos  AP:88.31, 77.04, 72.93
 Cyclist AP_R40@0.50, 0.50, 0.50:
 bbox AP:92.0034, 78.2514, 75.1325
 bev  AP:91.1729, 73.0341, 68.6284
-[3d   AP:89.0262, 69.5176, 65.1980] **this one**
+[3d   AP:89.0262, 69.5176, 65.1980] 
 aos  AP:91.88, 77.68, 74.54
 Cyclist AP@0.50, 0.25, 0.25:
 bbox AP:88.4227, 77.5629, 73.4575
