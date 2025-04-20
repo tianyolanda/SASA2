@@ -1,5 +1,5 @@
 import torch
-
+import time
 from .detector3d_template import Detector3DTemplate
 from ...ops.iou3d_nms import iou3d_nms_utils
 from ...ops.roiaware_pool3d import roiaware_pool3d_utils
@@ -9,10 +9,17 @@ class Point3DSSD(Detector3DTemplate):
     def __init__(self, model_cfg, num_class, dataset):
         super().__init__(model_cfg=model_cfg, num_class=num_class, dataset=dataset)
         self.module_list = self.build_networks()
+        self.time_list= []
 
     def forward(self, batch_dict):
         # print(batch_dict['points'].shape)  #torch.Size([16384, 5])
-        density_idx_cnt = cnt_ball_points(radius=0.5, nsample=500, points=batch_dict['points'])
+        time1 = time.time()
+        density_idx_cnt = cnt_ball_points(radius=2, nsample=500, points=batch_dict['points'])
+        # print(density_idx_cnt.size())
+        # density_idx_cnt = torch.zeros([1,16384])
+        time2 = time.time()
+        self.time_list.append(time2-time1)
+
         density_idx_cnt = density_idx_cnt.transpose(1, 0).contiguous()
         # print(idx_cnt.type) tensor
         batch_dict['density'] = density_idx_cnt
@@ -21,7 +28,10 @@ class Point3DSSD(Detector3DTemplate):
         for cur_module in self.module_list:
             # print('cur_module',cur_module)
 
+            time1 = time.time()
             batch_dict = cur_module(batch_dict)
+            time2 = time.time()
+            self.time_list.append(time2-time1)
 
         if self.training:
             loss, tb_dict, disp_dict = self.get_training_loss()
@@ -31,7 +41,14 @@ class Point3DSSD(Detector3DTemplate):
             }
             return ret_dict, tb_dict, disp_dict
         else:
+            time1 = time.time()
             pred_dicts, recall_dicts = self.post_processing(batch_dict)
+            time2 = time.time()
+            self.time_list.append(time2-time1)
+            recall_dicts['time_density_calculation'] = self.time_list[0]
+            recall_dicts['time_PointNet2FSMSG'] = self.time_list[1]
+            recall_dicts['time_PointHeadVote'] = self.time_list[2]
+            recall_dicts['time_post_processing'] = self.time_list[3]
             return pred_dicts, recall_dicts
 
     def get_training_loss(self):
@@ -67,9 +84,16 @@ class Point3DSSD(Detector3DTemplate):
         metric['recall_point_candidate'] = 0
         metric['positive_point_vote'] = 0
         metric['recall_point_vote'] = 0
+
         for cur_cls in range(len(self.class_names)):
             metric['recall_point_candidate[%s]' % self.class_names[cur_cls]] = 0
             metric['recall_point_vote[%s]' % self.class_names[cur_cls]] = 0
+
+        # record processing time
+        metric['time_density_calculation'] = 0
+        metric['time_PointNet2FSMSG'] = 0
+        metric['time_PointHeadVote'] = 0
+        metric['time_post_processing'] = 0
 
     def generate_recall_record(self, box_preds, recall_dict, batch_index, data_dict=None, thresh_list=None):
         if 'gt_boxes' not in data_dict:
@@ -239,9 +263,17 @@ class Point3DSSD(Detector3DTemplate):
                 recall_dict['gt_num'] += cur_cls_gt_num
                 recall_dict['gt_num[%s]' % self.class_names[cur_cls]] += cur_cls_gt_num
 
+        # record processing time
+        # recall_dict['time_density_calculation'] = self.time_list[0]
+        # recall_dict['time_PointNet2FSMSG'] = self.time_list[1]
+        # recall_dict['time_PointHeadVote'] = self.time_list[2]
+        # recall_dict['time_post_processing'] = self.time_list[3]
+
+
         return recall_dict
     
     def disp_recall_record(self, metric, logger, sample_num, **kwargs):
+
         gt_num = metric['gt_num']
         gt_num_cls = [metric['gt_num[%s]' % cur_cls] for cur_cls in self.class_names]
 
@@ -294,3 +326,20 @@ class Point3DSSD(Detector3DTemplate):
         for cur_cls in range(len(self.class_names)):
             cur_recall_point_cls = metric['recall_point_vote' + '[%s]' % self.class_names[cur_cls]] / max(gt_num_cls[cur_cls], 1)
             logger.info('\t- ' + self.class_names[cur_cls] + ': %f' % cur_recall_point_cls)
+
+        # record processing time
+        temp_1 = metric['time_density_calculation']/3769
+        logger.info('time_density_calculation: %f' % temp_1)
+        print('metric[time_density_calculation]',metric['time_density_calculation'],temp_1)
+
+        temp_2 = metric['time_PointNet2FSMSG']/3769
+        logger.info('time_PointNet2FSMSG: %f' % temp_2)
+        print('metric[time_PointNet2FSMSG]',metric['time_PointNet2FSMSG'],temp_2)
+
+        temp_3 = metric['time_PointHeadVote']/3769
+        logger.info('time_PointHeadVote: %f' % temp_3)
+        print('metric[time_PointHeadVote]',metric['time_PointHeadVote'],temp_3)
+
+        temp_4 = metric['time_post_processing']/3769
+        logger.info('time_post_processing: %f' % temp_4)
+        print('metric[time_post_processing]',metric['time_post_processing'],temp_4)

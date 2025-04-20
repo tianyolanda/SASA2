@@ -74,9 +74,7 @@ def cnt_ball_points(radius, nsample, points=''):
         num_points = points_torch.size(0)
         # print('points_torch.shape',points_torch.shape)
         points_torch = points_torch.view([1,num_points,3])
-        time1 = time.time()
         idx_cnt, idx = ball_query(radius,nsample, points_torch,points_torch)
-        time2 = time.time()
         # record
         # vis3d_pyvista(points_torch, idx_cnt)
         # tensor_save_to_txt(idx_cnt)

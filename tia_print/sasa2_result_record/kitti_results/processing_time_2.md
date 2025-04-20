@@ -1,0 +1,23 @@
+
+## 3dssd
+2025-04-13 17:22:52,073   INFO  time_density_calculation: 0.000089
+metric[time_density_calculation] 0.3351776599884033 8.893013000488281e-05
+2025-04-13 17:22:52,073   INFO  time_PointNet2FSMSG: 0.060906
+metric[time_PointNet2FSMSG] 229.55626010894775 0.060906410217285156
+2025-04-13 17:22:52,073   INFO  time_PointHeadVote: 0.018529
+metric[time_PointHeadVote] 69.83556842803955 0.01852893829345703
+2025-04-13 17:22:52,073   INFO  time_post_processing: 0.015078
+metric[time_post_processing] 56.82923746109009 0.015078067779541016
+
+## sasa
+ 
+
+## dsasa
+2025-04-13 18:50:48,132   INFO  time_density_calculation: 0.003226
+metric[time_density_calculation] 12.157154321670532 0.003225564956665039
+2025-04-13 18:50:48,132   INFO  time_PointNet2FSMSG: 0.053867
+metric[time_PointNet2FSMSG] 203.02330899238586 0.05386662483215332
+2025-04-13 18:50:48,132   INFO  time_PointHeadVote: 0.027028
+metric[time_PointHeadVote] 101.8670506477356 0.027027606964111328
+2025-04-13 18:50:48,133   INFO  time_post_processing: 0.013731
+metric[time_post_processing] 51.75214958190918 0.013731002807617188
