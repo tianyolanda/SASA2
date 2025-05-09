@@ -77,7 +77,7 @@ def cnt_ball_points(radius, nsample, points=''):
         idx_cnt, idx = ball_query(radius,nsample, points_torch,points_torch)
         # record
         # vis3d_pyvista(points_torch, idx_cnt)
-        # tensor_save_to_txt(idx_cnt)
+        tensor_save_to_txt(idx_cnt)
         # float_save_to_txt(time2-time1)
         if i == 0:
             idx_cnt_batch = idx_cnt

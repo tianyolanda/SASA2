@@ -4,6 +4,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')
+
+
 from . import pointnet2_utils
 from pcdet.utils.density_calculation import vis3d_pyvista
 
@@ -29,9 +33,11 @@ def density_factor_calculation(density, weight):
     :param weight: weight_beta
     :return: density_factor
     '''
-    # density = 1-density # (0~1)
-    density_factor = (1 + density ** weight)/2
-    # density_factor =  density ** weight
+
+    weight = 100
+    density = 1-density # (0~1)
+    # density_factor = (1 + density ** weight)/2
+    density_factor =  density ** weight
     return density_factor
 
 def sigmoid_normalize(tensor):
@@ -50,6 +56,8 @@ def vis_weight_distribution(value_before_weight, value_after_weight):
 
     # 加权后的数值分布
     value_after_weight = value_after_weight.cpu().flatten().numpy()
+
+    print('-----here')
 
     # 绘制加权前后的数值分布图
     plt.figure(figsize=(12, 6))
@@ -611,7 +619,7 @@ class _PointnetSAModuleFSBasewD(nn.Module):
                     density_norm = min_max_normalize(density_slice)
                     density_factor = density_factor_calculation(density_norm, self.weight_beta)
 
-                    # vis_weight_distribution(density_slice, density_factor)
+                    # vis_weight_distribution(density_slice.detach(), density_factor.detach())
                     # vis_weight_distribution(scores_slice_0.detach(), scores_slice.detach())
                     # vis_weight_distribution(scores_slice.detach(), scores_slice.detach()*density_factor)
 
