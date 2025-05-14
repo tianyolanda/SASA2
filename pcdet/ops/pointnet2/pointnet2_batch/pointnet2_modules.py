@@ -11,14 +11,14 @@ matplotlib.use('TkAgg')
 from . import pointnet2_utils
 from pcdet.utils.density_calculation import vis3d_pyvista
 
-def min_max_normalize(tensor):
+def min_max_normalize(tensor, min_vals=0, max_vals=500):
     # 最大-最小归一化（对每个 batch 分别计算 max 和 min）
 
     # 沿着第1维（batch 维度）计算每个 batch 的 min 和 max
     # min_vals = tensor.min(dim=2, keepdim=True).values  # 形状: [2, 1, 1]
-    min_vals = 0  # 形状: [2, 1, 1]
+    # min_vals = 0  # 形状: [2, 1, 1]
     # max_vals = tensor.max(dim=2, keepdim=True).values  # 形状: [2, 1, 1]
-    max_vals = 500  # 形状: [2, 1, 1]
+    # max_vals = 10  # 形状: [2, 1, 1]
     # 对每个 batch 进行归一化
     normalized_tensor = (tensor - min_vals) / (max_vals - min_vals)  # 形状: [2, 1, 4096]
     return normalized_tensor
@@ -34,7 +34,7 @@ def density_factor_calculation(density, weight):
     :return: density_factor
     '''
 
-    weight = 100
+    weight = 0.1
     density = 1-density # (0~1)
     # density_factor = (1 + density ** weight)/2
     density_factor =  density ** weight
@@ -65,15 +65,15 @@ def vis_weight_distribution(value_before_weight, value_after_weight):
     # 加权前的分布图
     plt.subplot(1, 2, 1)
     plt.hist(value_before_weight, bins=50, color='blue', alpha=0.7)
-    plt.title('Density Distribution Before Weighting')
-    plt.xlabel('Density Value')
+    plt.title('Distribution 1: semantic_score')
+    plt.xlabel('Value')
     plt.ylabel('Frequency')
 
     # 加权后的分布图
     plt.subplot(1, 2, 2)
     plt.hist(value_after_weight, bins=50, color='red', alpha=0.7)
-    plt.title('Density Distribution After Weighting')
-    plt.xlabel('Density Value(0, 1)')
+    plt.title('Distribution 2: semantic_score * density_factor')
+    plt.xlabel('Value')
     plt.ylabel('Frequency')
 
     plt.tight_layout()
@@ -618,17 +618,20 @@ class _PointnetSAModuleFSBasewD(nn.Module):
 
                     density_norm = min_max_normalize(density_slice)
                     density_factor = density_factor_calculation(density_norm, self.weight_beta)
-
-                    # vis_weight_distribution(density_slice.detach(), density_factor.detach())
-                    # vis_weight_distribution(scores_slice_0.detach(), scores_slice.detach())
-                    # vis_weight_distribution(scores_slice.detach(), scores_slice.detach()*density_factor)
-
-                    # aa =density_factor*scores_slice
-                    # aa =scores_slice
-                    # aa =density_factor
+                    #
+                    # # vis_weight_distribution(density_slice.detach(), density_factor.detach())
+                    # # vis_weight_distribution(scores_slice_0.detach(), scores_slice.detach())
+                    # show_aa = scores_slice.detach()
+                    # show_bb = show_aa.clone()
+                    # show_bb = show_bb*density_factor
+                    # vis_weight_distribution(show_aa,show_bb)
+                    #
+                    # aa =density_factor.clone()*scores_slice.clone()
+                    # # aa =scores_slice
+                    # # aa =density_factor
                     # print(aa.shape)
-                    # torch.Size([2, 4096])
-                    # torch.Size([2, 512])
+                    # # torch.Size([2, 4096])
+                    # # torch.Size([2, 512])
                     # print(xyz_slice.shape)
                     # vis3d_pyvista(xyz_slice.detach(), aa.detach())
 

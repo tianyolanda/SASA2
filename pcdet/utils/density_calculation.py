@@ -1,15 +1,47 @@
 from ..ops.pointnet2.pointnet2_batch.pointnet2_utils import ball_query
 import time
 import torch
+import matplotlib.pyplot as plt
+
+def vis_weight_distribution_single(value, radius, max):
+    '''
+    written by tiatia 2025/2/25
+    this function is to visiualize value distribution, can compare two values' distribution
+    :param value_before_weight: value 1 (B,1,N)?
+    :param value_after_weight:  value 2 (B,1,N)?
+    :return:
+    '''
+    # 加权前的数值分布
+    value = value.cpu().flatten().numpy()
+
+    # 加权后的数值分布
+
+    # 绘制加权前后的数值分布图
+    plt.figure(figsize=(6, 6))
+
+    # 加权前的分布图
+    plt.hist(value, bins=50, color='blue', alpha=0.7)
+    title_name = 'Distribution_of_radius_'+str(radius)+'_max_'+str(max)
+    plt.title(title_name)
+    plt.xlabel('Value')
+    plt.ylabel('Frequency')
+
+    plt.tight_layout()
+    plt.show()
+
 
 # 这俩save只能save一帧的内容...
-def tensor_save_to_txt(torchtensor):
+def tensor_save_to_txt(density_value_tensor, radius, max):
     # 打开文件并写入张量内容
-    with open('num_cnt_ball_points_radius2.0_nsample500.txt', 'w') as f:
-        for row in torchtensor:
+    print(density_value_tensor.size())
+    vis_weight_distribution_single(density_value_tensor, radius, max)
+    txt_file_name = 'num_cnt_ball_points_'+'radius_'+str(radius)+'max_'+str(max)+'.txt'
+    with open(txt_file_name, 'w') as f:
+        for row in density_value_tensor:
             # 将每一行转换为字符串并写入文件
             row_str = ' '.join([f'{x:.2f}' for x in row.tolist()])
             f.write(row_str + '\n')
+    print('successful save to ',txt_file_name)
 
 def float_save_to_txt(floatx):
     # 打开文件并写入内容
@@ -18,7 +50,7 @@ def float_save_to_txt(floatx):
         f.write(row_str + '\n')
 
 
-def vis3d_pyvista(points,feature):
+def vis3d_pyvista(points, feature):
     import pyvista as pv
     import numpy as np
     '''
@@ -36,19 +68,21 @@ def vis3d_pyvista(points,feature):
 
         cloud = pv.PolyData(points[:, :3])  # 提取 x, y, z 坐标
         # cloud["intensity"] = points[:, 3]  # 添加 intensity 作为标量场
-        # print(feature.shape)
+        print(feature.shape)
         cloud["intensity"] = feature.view(feature.size(1)).cpu()  # 添加 intensity 作为标量场
+        # cloud["intensity"] = feature.cpu()  # 添加 intensity 作为标量场
 
         # 可视化点云
         plotter = pv.Plotter()
         # 设置背景颜色为白色
         plotter.set_background("white")
         plotter.add_mesh(cloud, scalars="intensity", cmap="YlOrBr", point_size=3)
+        # plotter.add_mesh(cloud, scalars="intensity", cmap="viridis", point_size=1)
         # cmap change: https://matplotlib.org/stable/users/explain/colors/colormaps.html
         plotter.show()
     else:
         print('the shape of points is incorrect!')
-def cnt_ball_points(radius, nsample, points=''):
+def cnt_ball_points(radius, max_nsample, points=''):
     '''
 
     :param radius: 球半径
@@ -71,18 +105,21 @@ def cnt_ball_points(radius, nsample, points=''):
     for i in range(batch_num):
         # print('i',i)
         points_torch=torch.tensor(points[16384*i:16384*(i+1),1:4])
+        points_intensity_torch=torch.tensor(points[16384*i:16384*(i+1),4])
+
         num_points = points_torch.size(0)
         # print('points_torch.shape',points_torch.shape)
         points_torch = points_torch.view([1,num_points,3])
-        idx_cnt, idx = ball_query(radius,nsample, points_torch,points_torch)
+        idx_cnt, idx = ball_query(radius, max_nsample, points_torch,points_torch)
         # record
         # vis3d_pyvista(points_torch, idx_cnt)
-        tensor_save_to_txt(idx_cnt)
+        # vis3d_pyvista(points_torch, points_intensity_torch)
+        # tensor_save_to_txt(idx_cnt, radius, max_nsample)
         # float_save_to_txt(time2-time1)
         if i == 0:
             idx_cnt_batch = idx_cnt
         else:
-            idx_cnt_batch = torch.cat((idx_cnt_batch,idx_cnt),dim=1)
+            idx_cnt_batch = torch.cat((idx_cnt_batch, idx_cnt),dim=1)
         # print('idx_cnt_batch.size()',idx_cnt_batch.size())
     idx_cnt_batch_float = idx_cnt_batch.to(dtype=torch.float32)
     return idx_cnt_batch_float

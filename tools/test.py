@@ -21,7 +21,7 @@ def parse_config():
     parser = argparse.ArgumentParser(description='arg parser')
     parser.add_argument('--cfg_file', type=str, default='cfgs/kitti_models/car/3dssd_dsasa.yaml', help='specify the config for training')
 
-    parser.add_argument('--batch_size', type=int, default=4, required=False, help='batch size for training')
+    parser.add_argument('--batch_size', type=int, default=1, required=False, help='batch size for training')
     parser.add_argument('--workers', type=int, default=4, help='number of workers for dataloader')
     parser.add_argument('--extra_tag', type=str, default='default', help='extra tag for this experiment')
     parser.add_argument('--ckpt', type=str, default='../output/kitti_models/car/3dssd_dsasa_0.5/default/ckpt/checkpoint_epoch_79.pth', help='checkpoint to start from')
