@@ -15,7 +15,7 @@ class Point3DSSD(Detector3DTemplate):
         # print(batch_dict['points'].shape)  #torch.Size([16384, 5])
         # print(batch_dict['frame_id'])
         time1 = time.time()
-        density_idx_cnt = cnt_ball_points(radius=0.5, max_nsample=500, points=batch_dict['points'])
+        density_idx_cnt = cnt_ball_points(radius=0.1, max_nsample=5, points=batch_dict['points'])
         # print(density_idx_cnt.size())
         # density_idx_cnt = torch.zeros([1,16384])
         time2 = time.time()

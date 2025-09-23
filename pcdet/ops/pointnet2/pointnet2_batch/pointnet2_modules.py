@@ -11,7 +11,7 @@ matplotlib.use('TkAgg')
 from . import pointnet2_utils
 from pcdet.utils.density_calculation import vis3d_pyvista
 
-def min_max_normalize(tensor, min_vals=0, max_vals=500):
+def min_max_normalize(tensor, min_vals=0, max_vals=5):
     # 最大-最小归一化（对每个 batch 分别计算 max 和 min）
 
     # 沿着第1维（batch 维度）计算每个 batch 的 min 和 max
@@ -34,10 +34,10 @@ def density_factor_calculation(density, weight):
     :return: density_factor
     '''
 
-    weight = 0.1
+    weight = 1
     density = 1-density # (0~1)
-    # density_factor = (1 + density ** weight)/2
-    density_factor =  density ** weight
+    density_factor = (1 + density ** weight)/2
+    # density_factor =  density ** weight
     return density_factor
 
 def sigmoid_normalize(tensor):
@@ -618,7 +618,7 @@ class _PointnetSAModuleFSBasewD(nn.Module):
 
                     density_norm = min_max_normalize(density_slice)
                     density_factor = density_factor_calculation(density_norm, self.weight_beta)
-                    #
+
                     # # vis_weight_distribution(density_slice.detach(), density_factor.detach())
                     # # vis_weight_distribution(scores_slice_0.detach(), scores_slice.detach())
                     # show_aa = scores_slice.detach()

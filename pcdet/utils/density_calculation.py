@@ -67,17 +67,17 @@ def vis3d_pyvista(points, feature):
         # print('points.shape',points.shape)
 
         cloud = pv.PolyData(points[:, :3])  # 提取 x, y, z 坐标
-        # cloud["intensity"] = points[:, 3]  # 添加 intensity 作为标量场
+        # cloud["intensity"] = points[:, 3]  # 添加 intensity 作为特征(颜色)
         print(feature.shape)
-        cloud["intensity"] = feature.view(feature.size(1)).cpu()  # 添加 intensity 作为标量场
-        # cloud["intensity"] = feature.cpu()  # 添加 intensity 作为标量场
+        cloud["intensity"] = feature.view(feature.size(1)).cpu()  # 将 density 作为特征(颜色)
+        # cloud["intensity"] = feature.cpu()  # 添加 intensity 作为特征(颜色)
 
         # 可视化点云
         plotter = pv.Plotter()
         # 设置背景颜色为白色
         plotter.set_background("white")
-        plotter.add_mesh(cloud, scalars="intensity", cmap="YlOrBr", point_size=3)
-        # plotter.add_mesh(cloud, scalars="intensity", cmap="viridis", point_size=1)
+        plotter.add_mesh(cloud, scalars="intensity", cmap="YlOrBr", point_size=3) # 红色(density)
+        # plotter.add_mesh(cloud, scalars="intensity", cmap="viridis", point_size=1) #蓝色(pcl)
         # cmap change: https://matplotlib.org/stable/users/explain/colors/colormaps.html
         plotter.show()
     else:

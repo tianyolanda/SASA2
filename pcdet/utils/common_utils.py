@@ -137,22 +137,57 @@ def init_dist_slurm(tcp_port, local_rank, backend='nccl'):
     rank = dist.get_rank()
     return total_gpus, rank
 
+#
+# def init_dist_pytorch(tcp_port, local_rank, backend='nccl'):
+#     if mp.get_start_method(allow_none=True) is None:
+#         mp.set_start_method('spawn')
+#
+#     num_gpus = torch.cuda.device_count()
+#     torch.cuda.set_device(local_rank % num_gpus)
+#     dist.init_process_group(
+#         backend=backend,
+#         init_method='tcp://127.0.0.1:%d' % tcp_port,
+#         rank=local_rank,
+#         world_size=num_gpus
+#     )
+#     rank = dist.get_rank()
+#     return num_gpus, rank
 
 def init_dist_pytorch(tcp_port, local_rank, backend='nccl'):
-    if mp.get_start_method(allow_none=True) is None:
-        mp.set_start_method('spawn')
+    """
+    适配 torchrun 的分布式初始化函数
+    """
+    # 设置当前GPU设备
+    torch.cuda.set_device(local_rank)
+    print(f"DEBUG: Setting CUDA device to {local_rank}")
 
-    num_gpus = torch.cuda.device_count()
-    torch.cuda.set_device(local_rank % num_gpus)
+    # 对于 torchrun，使用环境变量提供的rank和world_size
+    if 'RANK' in os.environ and 'WORLD_SIZE' in os.environ:
+        # torchrun 自动设置的环境变量
+        rank = int(os.environ['RANK'])
+        world_size = int(os.environ['WORLD_SIZE'])
+        init_method = 'env://'
+    else:
+        # 回退到传统方式（用于 torch.distributed.launch）
+        rank = local_rank
+        world_size = torch.cuda.device_count()
+        init_method = f'tcp://127.0.0.1:{tcp_port}'
+
+    # 初始化进程组
     dist.init_process_group(
         backend=backend,
-        init_method='tcp://127.0.0.1:%d' % tcp_port,
-        rank=local_rank,
-        world_size=num_gpus
+        init_method=init_method,
+        world_size=world_size,
+        rank=rank
     )
-    rank = dist.get_rank()
-    return num_gpus, rank
 
+    # 验证初始化
+    actual_rank = dist.get_rank()
+    actual_world_size = dist.get_world_size()
+
+    print(f"DEBUG: Distributed init - Local: {local_rank}, Global: {actual_rank}/{actual_world_size}")
+
+    return actual_world_size, local_rank
 
 def get_dist_info():
     if torch.__version__ < '1.0':
