@@ -31,10 +31,10 @@ def parse_config():
     parser.add_argument('--pretrained_model', type=str, default=None, help='pretrained_model')
     parser.add_argument('--launcher', choices=['none', 'pytorch', 'slurm'], default='none')
     parser.add_argument('--tcp_port', type=int, default=18888, help='tcp port for distrbuted training')
-    parser.add_argument('--sync_bn', action='store_true', default=False, help='whether to use sync bn')
+    parser.add_argument('--sync_bn', action='store_true', default=True, help='whether to use sync bn')
     parser.add_argument('--fix_random_seed', type=int, default=666, help='random seed')
     parser.add_argument('--ckpt_save_interval', type=int, default=1, help='number of training epochs')
-    parser.add_argument('--local_rank', type=int, default=0, help='local rank for distributed training')
+    # parser.add_argument('--local_rank', type=int, default=0, help='local rank for distributed training')
     parser.add_argument('--max_ckpt_save_num', type=int, default=10, help='max number of saved checkpoint')
     parser.add_argument('--merge_all_iters_to_one_epoch', action='store_true', default=False, help='')
     parser.add_argument('--set', dest='set_cfgs', default=None, nargs=argparse.REMAINDER,
@@ -45,6 +45,17 @@ def parse_config():
     parser.add_argument('--save_to_file', action='store_true', default=False, help='')
 
     args = parser.parse_args()
+
+
+    # ========== 添加这行：从环境变量获取local_rank ==========
+    if 'LOCAL_RANK' in os.environ:
+        args.local_rank = int(os.environ['LOCAL_RANK'])
+    else:
+        args.local_rank = 0
+
+    print(args.local_rank)
+    # ===================================================
+
 
     cfg_from_yaml_file(args.cfg_file, cfg)
     cfg.TAG = Path(args.cfg_file).stem
@@ -68,8 +79,13 @@ def main():
             args.tcp_port, args.local_rank, backend='nccl'
         )
         dist_train = True
-        print('1111111111')
+        print('000000000')
 
+        # 关键修复：设置当前GPU设备
+        torch.cuda.set_device(cfg.LOCAL_RANK)
+        print(f'CUDA device set to: {cfg.LOCAL_RANK}')
+
+        print('1111111111')
 
     if args.batch_size is None:
         args.batch_size = cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU
@@ -120,9 +136,14 @@ def main():
     model = build_network(model_cfg=cfg.MODEL, num_class=len(cfg.CLASS_NAMES), dataset=train_set)
     if args.sync_bn:
         model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
-    model.cuda()
-    print('train_set',train_set)
-    # summary(model,)
+
+    # 修复模型移动到GPU
+    if dist_train:
+        model = model.cuda(cfg.LOCAL_RANK)
+    else:
+        model.cuda()
+
+    print('train_set', train_set)
 
     optimizer = build_optimizer(model, cfg.OPTIMIZATION)
 
@@ -130,23 +151,28 @@ def main():
     start_epoch = it = 0
     last_epoch = -1
     if args.pretrained_model is not None:
-        model.load_params_from_file(filename=args.pretrained_model, to_cpu=dist, logger=logger)
+        model.load_params_from_file(filename=args.pretrained_model, to_cpu=dist_train, logger=logger)
 
     if args.ckpt is not None:
-        it, start_epoch = model.load_params_with_optimizer(args.ckpt, to_cpu=dist, optimizer=optimizer, logger=logger)
+        it, start_epoch = model.load_params_with_optimizer(args.ckpt, to_cpu=dist_train, optimizer=optimizer,
+                                                           logger=logger)
         last_epoch = start_epoch + 1
     else:
         ckpt_list = glob.glob(str(ckpt_dir / '*checkpoint_epoch_*.pth'))
         if len(ckpt_list) > 0:
             ckpt_list.sort(key=os.path.getmtime)
             it, start_epoch = model.load_params_with_optimizer(
-                ckpt_list[-1], to_cpu=dist, optimizer=optimizer, logger=logger
+                ckpt_list[-1], to_cpu=dist_train, optimizer=optimizer, logger=logger
             )
             last_epoch = start_epoch + 1
 
-    model.train()  # before wrap to DistributedDataParallel to support fixed some parameters
+    model.train()
     if dist_train:
-        model = nn.parallel.DistributedDataParallel(model, device_ids=[cfg.LOCAL_RANK % torch.cuda.device_count()])
+        model = nn.parallel.DistributedDataParallel(
+            model,
+            device_ids=[cfg.LOCAL_RANK],
+            output_device=cfg.LOCAL_RANK
+        )
     logger.info(model)
 
     total_iters_each_epoch = len(train_loader)

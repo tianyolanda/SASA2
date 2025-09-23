@@ -21,7 +21,7 @@ from torchsummary import summary
 
 def parse_config():
     parser = argparse.ArgumentParser(description='arg parser')
-    parser.add_argument('--cfg_file', type=str, default='cfgs/kitti_models/3dssd_sasa.yaml', help='specify the config for training')
+    parser.add_argument('--cfg_file', type=str, default='cfgs/nuscenes_models/3dssd.yaml', help='specify the config for training')
 
     parser.add_argument('--batch_size', type=int, default=None, required=False, help='batch size for training')
     parser.add_argument('--epochs', type=int, default=None, required=False, help='number of epochs to train for')
@@ -62,10 +62,14 @@ def main():
         dist_train = False
         total_gpus = 1
     else:
+        print('hhhhhhhhhhhhhhere')
+
         total_gpus, cfg.LOCAL_RANK = getattr(common_utils, 'init_dist_%s' % args.launcher)(
             args.tcp_port, args.local_rank, backend='nccl'
         )
         dist_train = True
+        print('1111111111')
+
 
     if args.batch_size is None:
         args.batch_size = cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU
