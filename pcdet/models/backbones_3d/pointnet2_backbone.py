@@ -377,6 +377,10 @@ class PointNet2FSMSGwD(nn.Module):
         weight_beta = self.model_cfg.SA_CONFIG.get('WEIGHT_BETA', 1.0)
         density_norm_max = self.model_cfg.SA_CONFIG.get('DENSITY_NORM_MAX', 5.0)
         density_normalized = self.model_cfg.SA_CONFIG.get('DENSITY_NORMALIZED', False)
+        density_weight_mode = self.model_cfg.SA_CONFIG.get('DENSITY_WEIGHT_MODE', 'multiply')
+        density_alpha = self.model_cfg.SA_CONFIG.get('DENSITY_ALPHA', 1.0)
+        density_gate_tau = self.model_cfg.SA_CONFIG.get('DENSITY_GATE_TAU', 0.3)
+        density_gate_k = self.model_cfg.SA_CONFIG.get('DENSITY_GATE_K', 10.0)
 
         self.aggregation_mlps = self.model_cfg.SA_CONFIG.get('AGGREGATION_MLPS', None)
         self.confidence_mlps = self.model_cfg.SA_CONFIG.get('CONFIDENCE_MLPS', None)
@@ -424,6 +428,10 @@ class PointNet2FSMSGwD(nn.Module):
                     weight_beta=weight_beta,
                     density_norm_max=density_norm_max,
                     density_normalized=density_normalized,
+                    density_weight_mode=density_weight_mode,
+                    density_alpha=density_alpha,
+                    density_gate_tau=density_gate_tau,
+                    density_gate_k=density_gate_k,
                     aggregation_mlp=aggregation_mlp,
                     confidence_mlp=confidence_mlp
                 )

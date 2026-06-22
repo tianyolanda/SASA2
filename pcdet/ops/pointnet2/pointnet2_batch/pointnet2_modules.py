@@ -39,6 +39,16 @@ def density_factor_calculation(density, weight):
     # density_factor =  density ** weight
     return density_factor
 
+def apply_density_weight_mode(scores, density_factor, mode='multiply', alpha=1.0, gate_tau=0.3, gate_k=10.0):
+    if mode == 'multiply':
+        return density_factor
+    if mode == 'residual':
+        return 1.0 + alpha * density_factor
+    if mode == 'gated_residual':
+        gate = torch.sigmoid(gate_k * (scores - gate_tau))
+        return 1.0 + alpha * gate * density_factor
+    raise NotImplementedError('Unknown density weight mode: %s' % mode)
+
 def sigmoid_normalize(tensor):
     return tensor.sigmoid()
 
@@ -549,6 +559,10 @@ class _PointnetSAModuleFSBasewD(nn.Module):
         self.weight_beta = 1.0
         self.density_norm_max = 5.0
         self.density_normalized = False
+        self.density_weight_mode = 'multiply'
+        self.density_alpha = 1.0
+        self.density_gate_tau = 0.3
+        self.density_gate_k = 10.0
         self.skip_connection = False
 
         self.aggregation_mlp = None
@@ -622,6 +636,14 @@ class _PointnetSAModuleFSBasewD(nn.Module):
                     else:
                         density_norm = min_max_normalize(density_slice, max_vals=self.density_norm_max)
                     density_factor = density_factor_calculation(density_norm, self.weight_beta)
+                    density_factor = apply_density_weight_mode(
+                        scores_slice,
+                        density_factor,
+                        mode=self.density_weight_mode,
+                        alpha=self.density_alpha,
+                        gate_tau=self.density_gate_tau,
+                        gate_k=self.density_gate_k
+                    )
 
                     # # vis_weight_distribution(density_slice.detach(), density_factor.detach())
                     # # vis_weight_distribution(scores_slice_0.detach(), scores_slice.detach())
@@ -725,6 +747,10 @@ class PointnetSAModuleFSMSGwD(_PointnetSAModuleFSBasewD):
                  weight_beta: float = 1.0,
                  density_norm_max: float = 5.0,
                  density_normalized: bool = False,
+                 density_weight_mode: str = 'multiply',
+                 density_alpha: float = 1.0,
+                 density_gate_tau: float = 0.3,
+                 density_gate_k: float = 10.0,
                  aggregation_mlp: List[int] = None,
                  confidence_mlp: List[int] = None):
         """
@@ -792,6 +818,10 @@ class PointnetSAModuleFSMSGwD(_PointnetSAModuleFSBasewD):
         self.weight_beta = weight_beta
         self.density_norm_max = density_norm_max
         self.density_normalized = density_normalized
+        self.density_weight_mode = density_weight_mode
+        self.density_alpha = density_alpha
+        self.density_gate_tau = density_gate_tau
+        self.density_gate_k = density_gate_k
 
         if skip_connection:
             out_channels = out_channels + in_channels
