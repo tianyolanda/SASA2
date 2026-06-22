@@ -3,7 +3,7 @@ CLASS_NAMES: ['car','truck', 'construction_vehicle', 'bus', 'trailer',
 
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/nuscenes_point.yaml
-    MAX_SWEEPS: 10 # 10
+    MAX_SWEEPS: 10
     PRED_VELOCITY: True
 
     DATA_PROCESSOR:
@@ -30,12 +30,19 @@ DATA_CONFIG:
 MODEL:
     NAME: 3DSSD
 
+    DENSITY_CONFIG:
+        MODE: fixed
+        RADIUS: 0.2
+        MAX_NSAMPLE: 10
+        NORM_MAX: 10
+        OUTPUT_NORMALIZED: False
+
     BACKBONE_3D:
-        NAME: PointNet2FSMSG
+        NAME: PointNet2FSMSGwD
         SA_CONFIG:
             NPOINT_LIST: [[4096, 12288], [1024, 1024, 2048], [1024, 2048], [1024, 1024]]
             SAMPLE_RANGE_LIST: [[[0, 16384], [16384, 65536]], [[0, 4096], [0, 4096], [4096, 16384]], [[0, 4096], [0, 4096]], [[0, 3072], [0, 3072]]]
-            SAMPLE_METHOD_LIST: [['d-fps', 'd-fps'], ['f-fps', 'd-fps', 'd-fps'], ['f-fps', 'd-fps'], ['f-fps', 'd-fps']]
+            SAMPLE_METHOD_LIST: [['d-fps', 'd-fps'], ['sden-fps', 'd-fps', 'd-fps'], ['sden-fps', 'd-fps'], ['sden-fps', 'd-fps']]
             RADIUS: [[0.5, 1.0], [1.0, 2.0], [2.0, 4.0], [4.0, 8.0]]
             NSAMPLE: [[32, 64], [32, 64], [32, 64], [32, 64]]
             MLPS: [[[32, 58, 64], [32, 64, 64]],
@@ -43,7 +50,11 @@ MODEL:
                    [[128, 196, 256], [128, 256, 256]],
                    [[256, 256, 384], [256, 384, 384]]]
             AGGREGATION_MLPS: [[64], [128], [256], [384]]
+            CONFIDENCE_MLPS: [[32], [64], [128], []]
             WEIGHT_GAMMA: 1.0
+            WEIGHT_BETA: 1.0
+            DENSITY_NORM_MAX: 10
+            DENSITY_NORMALIZED: False
             DILATED_RADIUS_GROUP: True
 
     POINT_HEAD:
@@ -81,6 +92,11 @@ MODEL:
         LOSS_CONFIG:
             LOSS_CLS: WeightedBinaryCrossEntropyWithCenterness
             LOSS_REG: WeightedSmoothL1Loss
+            LOSS_SASA_CONFIG: {
+                'set_ignore_flag': True,
+                'extra_width': [1.0, 1.0, 1.0],
+                'layer_weights': [0.001, 0.01, 0.1, 0]
+            }
             AXIS_ALIGNED_IOU_LOSS_REGULARIZATION: False
             CORNER_LOSS_REGULARIZATION: False
             LOSS_WEIGHTS: {

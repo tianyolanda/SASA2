@@ -3,7 +3,11 @@ import time
 from .detector3d_template import Detector3DTemplate
 from ...ops.iou3d_nms import iou3d_nms_utils
 from ...ops.roiaware_pool3d import roiaware_pool3d_utils
-from pcdet.utils.density_calculation import cnt_ball_points
+from pcdet.utils.density_calculation import (
+    cnt_ball_points,
+    cnt_ball_points_fixed,
+    cnt_ball_points_range_adaptive,
+)
 
 class Point3DSSD(Detector3DTemplate):
     def __init__(self, model_cfg, num_class, dataset):
@@ -11,11 +15,33 @@ class Point3DSSD(Detector3DTemplate):
         self.module_list = self.build_networks()
         self.time_list= []
 
+    def get_density(self, batch_dict):
+        density_cfg = self.model_cfg.get('DENSITY_CONFIG', None)
+        if density_cfg is None:
+            return cnt_ball_points_fixed(radius=0.1, max_nsample=5, points=batch_dict['points'])
+
+        mode = density_cfg.get('MODE', 'fixed')
+        if mode == 'fixed':
+            return cnt_ball_points_fixed(
+                radius=density_cfg.get('RADIUS', 0.1),
+                max_nsample=density_cfg.get('MAX_NSAMPLE', 5),
+                norm_max=density_cfg.get('NORM_MAX', density_cfg.get('MAX_NSAMPLE', 5)),
+                normalize=density_cfg.get('OUTPUT_NORMALIZED', False),
+                points=batch_dict['points']
+            )
+        elif mode == 'range':
+            return cnt_ball_points_range_adaptive(
+                range_configs=density_cfg.RANGE_CONFIG,
+                points=batch_dict['points']
+            )
+        else:
+            raise NotImplementedError('Unknown DENSITY_CONFIG.MODE: %s' % mode)
+
     def forward(self, batch_dict):
         # print(batch_dict['points'].shape)  #torch.Size([16384, 5])
         # print(batch_dict['frame_id'])
         time1 = time.time()
-        density_idx_cnt = cnt_ball_points(radius=0.1, max_nsample=5, points=batch_dict['points'])
+        density_idx_cnt = self.get_density(batch_dict)
         # print(density_idx_cnt.size())
         # density_idx_cnt = torch.zeros([1,16384])
         time2 = time.time()

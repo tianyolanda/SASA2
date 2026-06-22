@@ -124,6 +124,93 @@ def cnt_ball_points(radius, max_nsample, points=''):
     idx_cnt_batch_float = idx_cnt_batch.to(dtype=torch.float32)
     return idx_cnt_batch_float
 
+
+def _as_torch_points(points):
+    if isinstance(points, torch.Tensor):
+        return points if points.is_cuda else points.cuda()
+    return torch.as_tensor(points, dtype=torch.float32).cuda()
+
+
+def _get_batch_count(points):
+    return int(torch.max(points[:, 0]).item()) + 1
+
+
+def _query_density_count(support_xyz, query_xyz, radius, max_nsample):
+    support_xyz = support_xyz.view(1, -1, 3).contiguous()
+    query_xyz = query_xyz.view(1, -1, 3).contiguous()
+    idx_cnt, _ = ball_query(radius, max_nsample, support_xyz, query_xyz)
+    return idx_cnt.to(dtype=torch.float32).view(-1)
+
+
+def cnt_ball_points_fixed(radius=0.1, max_nsample=5, points='', normalize=False, norm_max=None):
+    """
+    Configurable fixed-radius density calculation for DSASA.
+
+    Returns:
+        (1, total_points) density tensor. By default it returns raw neighbor counts.
+        If normalize=True, it returns counts / norm_max clamped to [0, 1].
+    """
+    points = _as_torch_points(points)
+    first_column = points[:, 0]
+    batch_num = _get_batch_count(points)
+    density_batch = []
+
+    for i in range(batch_num):
+        cur_points = points[first_column == i]
+        cur_xyz = cur_points[:, 1:4].contiguous()
+        cur_density = _query_density_count(cur_xyz, cur_xyz, radius, max_nsample)
+
+        if normalize:
+            cur_norm_max = float(norm_max if norm_max is not None else max_nsample)
+            cur_density = torch.clamp(cur_density / cur_norm_max, min=0.0, max=1.0)
+
+        density_batch.append(cur_density.view(1, -1))
+
+    return torch.cat(density_batch, dim=1).to(dtype=torch.float32)
+
+
+def cnt_ball_points_range_adaptive(range_configs, points=''):
+    """
+    Range-adaptive density calculation for DSASA.
+
+    Each config should contain:
+        MIN_DISTANCE, MAX_DISTANCE, RADIUS, MAX_NSAMPLE, NORM_MAX
+
+    Returns:
+        (1, total_points) normalized density tensor in [0, 1].
+        Query points are split by distance, but neighbors are searched in the
+        whole current frame so points near bin boundaries still see each other.
+    """
+    points = _as_torch_points(points)
+    first_column = points[:, 0]
+    batch_num = _get_batch_count(points)
+    density_batch = []
+
+    for i in range(batch_num):
+        cur_points = points[first_column == i]
+        cur_xyz = cur_points[:, 1:4].contiguous()
+        cur_dist = torch.norm(cur_xyz[:, 0:2], dim=1)
+        cur_density = cur_xyz.new_zeros((cur_xyz.shape[0],), dtype=torch.float32)
+
+        for cfg in range_configs:
+            min_distance = float(cfg.get('MIN_DISTANCE', 0.0))
+            max_distance = float(cfg.get('MAX_DISTANCE', 1e8))
+            radius = float(cfg.get('RADIUS', 0.1))
+            max_nsample = int(cfg.get('MAX_NSAMPLE', 5))
+            norm_max = float(cfg.get('NORM_MAX', max_nsample))
+
+            mask = (cur_dist >= min_distance) & (cur_dist < max_distance)
+            if mask.sum().item() == 0:
+                continue
+
+            query_xyz = cur_xyz[mask].contiguous()
+            counts = _query_density_count(cur_xyz, query_xyz, radius, max_nsample)
+            cur_density[mask] = torch.clamp(counts / norm_max, min=0.0, max=1.0)
+
+        density_batch.append(cur_density.view(1, -1))
+
+    return torch.cat(density_batch, dim=1).to(dtype=torch.float32)
+
 '''
 def ball_query(radius: float, nsample: int, xyz: torch.Tensor, new_xyz: torch.Tensor):
     """

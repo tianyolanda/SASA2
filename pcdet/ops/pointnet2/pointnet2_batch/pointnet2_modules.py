@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use('TkAgg')
+matplotlib.use('Agg')
 
 
 from . import pointnet2_utils
@@ -21,7 +21,7 @@ def min_max_normalize(tensor, min_vals=0, max_vals=5):
     # max_vals = 10  # 形状: [2, 1, 1]
     # 对每个 batch 进行归一化
     normalized_tensor = (tensor - min_vals) / (max_vals - min_vals)  # 形状: [2, 1, 4096]
-    return normalized_tensor
+    return torch.clamp(normalized_tensor, min=0.0, max=1.0)
 
 def density_factor_calculation(density, weight):
     '''
@@ -34,7 +34,6 @@ def density_factor_calculation(density, weight):
     :return: density_factor
     '''
 
-    weight = 1
     density = 1-density # (0~1)
     density_factor = (1 + density ** weight)/2
     # density_factor =  density ** weight
@@ -548,6 +547,8 @@ class _PointnetSAModuleFSBasewD(nn.Module):
         self.dilated_radius_group = False
         self.weight_gamma = 1.0
         self.weight_beta = 1.0
+        self.density_norm_max = 5.0
+        self.density_normalized = False
         self.skip_connection = False
 
         self.aggregation_mlp = None
@@ -616,7 +617,10 @@ class _PointnetSAModuleFSBasewD(nn.Module):
                     density_slice = \
                         density_squeezed[:, self.sample_range_list[i][0]:self.sample_range_list[i][1]].contiguous()
 
-                    density_norm = min_max_normalize(density_slice)
+                    if self.density_normalized:
+                        density_norm = torch.clamp(density_slice, min=0.0, max=1.0)
+                    else:
+                        density_norm = min_max_normalize(density_slice, max_vals=self.density_norm_max)
                     density_factor = density_factor_calculation(density_norm, self.weight_beta)
 
                     # # vis_weight_distribution(density_slice.detach(), density_factor.detach())
@@ -718,6 +722,9 @@ class PointnetSAModuleFSMSGwD(_PointnetSAModuleFSBasewD):
                  dilated_radius_group: bool = False,
                  skip_connection: bool = False,
                  weight_gamma: float = 1.0,
+                 weight_beta: float = 1.0,
+                 density_norm_max: float = 5.0,
+                 density_normalized: bool = False,
                  aggregation_mlp: List[int] = None,
                  confidence_mlp: List[int] = None):
         """
@@ -782,6 +789,9 @@ class PointnetSAModuleFSMSGwD(_PointnetSAModuleFSBasewD):
         self.dilated_radius_group = dilated_radius_group
         self.skip_connection = skip_connection
         self.weight_gamma = weight_gamma
+        self.weight_beta = weight_beta
+        self.density_norm_max = density_norm_max
+        self.density_normalized = density_normalized
 
         if skip_connection:
             out_channels = out_channels + in_channels

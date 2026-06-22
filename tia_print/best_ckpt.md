@@ -1,0 +1,1 @@
+default='../output/kitti_models/car/3dssd_dsasa_0.5/default/ckpt/checkpoint_epoch_79.pth'

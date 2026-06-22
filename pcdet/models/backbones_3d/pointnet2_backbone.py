@@ -374,6 +374,9 @@ class PointNet2FSMSGwD(nn.Module):
         dilated_group = self.model_cfg.SA_CONFIG.get('DILATED_RADIUS_GROUP', False)
         skip_connection = self.model_cfg.SA_CONFIG.get('SKIP_CONNECTION', False)
         weight_gamma = self.model_cfg.SA_CONFIG.get('WEIGHT_GAMMA', 1.0)
+        weight_beta = self.model_cfg.SA_CONFIG.get('WEIGHT_BETA', 1.0)
+        density_norm_max = self.model_cfg.SA_CONFIG.get('DENSITY_NORM_MAX', 5.0)
+        density_normalized = self.model_cfg.SA_CONFIG.get('DENSITY_NORMALIZED', False)
 
         self.aggregation_mlps = self.model_cfg.SA_CONFIG.get('AGGREGATION_MLPS', None)
         self.confidence_mlps = self.model_cfg.SA_CONFIG.get('CONFIDENCE_MLPS', None)
@@ -418,6 +421,9 @@ class PointNet2FSMSGwD(nn.Module):
                     dilated_radius_group=dilated_group,
                     skip_connection=skip_connection,
                     weight_gamma=weight_gamma,
+                    weight_beta=weight_beta,
+                    density_norm_max=density_norm_max,
+                    density_normalized=density_normalized,
                     aggregation_mlp=aggregation_mlp,
                     confidence_mlp=confidence_mlp
                 )
