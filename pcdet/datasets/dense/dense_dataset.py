@@ -18,6 +18,17 @@ def get_fov_flag(pts_rect, img_shape, calib):
     return np.logical_and(val_flag_merge, pts_rect_depth >= 0)
 
 
+def drop_dense_info_with_name(info, name):
+    ret_info = {}
+    keep_indices = [i for i, x in enumerate(info['name']) if x != name]
+    for key in info.keys():
+        if key == 'gt_boxes_lidar' and len(info[key]) != len(info['name']):
+            ret_info[key] = info[key]
+        else:
+            ret_info[key] = info[key][keep_indices]
+    return ret_info
+
+
 class DenseDataset(DatasetTemplate):
     def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None):
         super().__init__(
@@ -329,7 +340,7 @@ class DenseDataset(DatasetTemplate):
         }
 
         if 'annos' in info:
-            annos = common_utils.drop_info_with_name(info['annos'], name='DontCare')
+            annos = drop_dense_info_with_name(info['annos'], name='DontCare')
             loc, dims, rots = annos['location'], annos['dimensions'], annos['rotation_y']
             gt_boxes_camera = np.concatenate([loc, dims, rots[..., np.newaxis]], axis=1).astype(np.float32)
             gt_boxes_lidar = box_utils.boxes3d_kitti_camera_to_lidar(gt_boxes_camera, calib)
