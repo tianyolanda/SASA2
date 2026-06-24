@@ -1,5 +1,8 @@
 _BASE_CONFIG_: cfgs/dense_models/3dssd_dsasa.yaml
 
+DATA_CONFIG:
+    _BASE_CONFIG_: cfgs/dataset_configs/dense_dataset.yaml
+
 MODEL:
     DENSITY_CONFIG:
         MODE: fixed
@@ -12,4 +15,3 @@ MODEL:
         SA_CONFIG:
             DENSITY_NORM_MAX: 10
             DENSITY_NORMALIZED: True
-
