@@ -1,0 +1,32 @@
+_BASE_CONFIG_: cfgs/dense_models/3dssd_dsasa.yaml
+
+MODEL:
+    DENSITY_CONFIG:
+        MODE: range
+        RANGE_CONFIG:
+            - MIN_DISTANCE: 0.0
+              MAX_DISTANCE: 20.0
+              RADIUS: 0.12
+              MAX_NSAMPLE: 8
+              NORM_MAX: 8
+            - MIN_DISTANCE: 20.0
+              MAX_DISTANCE: 40.0
+              RADIUS: 0.2
+              MAX_NSAMPLE: 10
+              NORM_MAX: 10
+            - MIN_DISTANCE: 40.0
+              MAX_DISTANCE: 80.0
+              RADIUS: 0.3
+              MAX_NSAMPLE: 12
+              NORM_MAX: 12
+            - MIN_DISTANCE: 80.0
+              MAX_DISTANCE: 100000000.0
+              RADIUS: 0.4
+              MAX_NSAMPLE: 12
+              NORM_MAX: 12
+
+    BACKBONE_3D:
+        SA_CONFIG:
+            DENSITY_NORM_MAX: 1.0
+            DENSITY_NORMALIZED: True
+

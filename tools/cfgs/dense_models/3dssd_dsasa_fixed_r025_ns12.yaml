@@ -1,0 +1,15 @@
+_BASE_CONFIG_: cfgs/dense_models/3dssd_dsasa.yaml
+
+MODEL:
+    DENSITY_CONFIG:
+        MODE: fixed
+        RADIUS: 0.25
+        MAX_NSAMPLE: 12
+        NORM_MAX: 12
+        OUTPUT_NORMALIZED: False
+
+    BACKBONE_3D:
+        SA_CONFIG:
+            DENSITY_NORM_MAX: 12
+            DENSITY_NORMALIZED: False
+
