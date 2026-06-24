@@ -11,10 +11,10 @@ EPOCHS="${EPOCHS:-80}"
 BASE_PORT="${BASE_PORT:-18920}"
 
 RUNS=(
-  "second cfgs/dense_models/second.yaml 8 dense_second_2gpu_bs8"
-  "pointpillar cfgs/dense_models/pointpillar.yaml 8 dense_pointpillar_2gpu_bs8"
-  "pv_rcnn cfgs/dense_models/pv_rcnn.yaml 4 dense_pv_rcnn_2gpu_bs4"
-  "PartA2 cfgs/dense_models/PartA2.yaml 4 dense_PartA2_2gpu_bs4"
+  "second cfgs/dense_models/second.yaml 24 dense_second_2gpu_bs24"
+  "pointpillar cfgs/dense_models/pointpillar.yaml 32 dense_pointpillar_2gpu_bs32"
+  "pv_rcnn cfgs/dense_models/pv_rcnn.yaml 12 dense_pv_rcnn_2gpu_bs12"
+  "PartA2_safe cfgs/dense_models/PartA2_safe.yaml 4 dense_PartA2_safe_2gpu_bs4"
 )
 
 run_one() {
@@ -57,4 +57,3 @@ for run in "${RUNS[@]}"; do
   run_one "${name}" "${cfg_file}" "${batch_size}" "${extra_tag}" "$((BASE_PORT + idx))"
   idx=$((idx + 1))
 done
-
