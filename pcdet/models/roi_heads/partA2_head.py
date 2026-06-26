@@ -132,7 +132,7 @@ class PartA2FCHead(RoIHeadTemplate):
             pool_shape = (pool_size, pool_size, pool_size)
         else:
             pool_shape = tuple(pool_size)
-        min_roi_dim = float(self.model_cfg.get('MIN_ROI_DIM', 1e-3))
+        min_roi_dim = float(self.model_cfg.get('MIN_ROI_DIM', 0.1))
 
         for bs_idx in range(batch_size):
             bs_mask = (batch_idx == bs_idx)
