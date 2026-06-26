@@ -126,6 +126,12 @@ class PointHeadTemplate(nn.Module):
     def get_cls_layer_loss(self, tb_dict=None):
         point_cls_labels = self.forward_ret_dict['point_cls_labels'].view(-1)
         point_cls_preds = self.forward_ret_dict['point_cls_preds'].view(-1, self.num_class)
+        if self.num_class == 1:
+            point_cls_labels = torch.where(
+                point_cls_labels < 0,
+                point_cls_labels,
+                (point_cls_labels > 0).long()
+            )
 
         positives = (point_cls_labels > 0)
         negative_cls_weights = (point_cls_labels == 0) * 1.0
