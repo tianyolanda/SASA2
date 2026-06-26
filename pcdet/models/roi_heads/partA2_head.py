@@ -136,9 +136,10 @@ class PartA2FCHead(RoIHeadTemplate):
 
         for bs_idx in range(batch_size):
             bs_mask = (batch_idx == bs_idx)
-            cur_point_coords = point_coords[bs_mask].contiguous()
-            cur_part_features = part_features[bs_mask].contiguous()
-            cur_rpn_features = point_features[bs_mask].contiguous()
+            bs_indices = bs_mask.nonzero().view(-1)
+            cur_point_coords = point_coords.index_select(0, bs_indices).contiguous()
+            cur_part_features = part_features.index_select(0, bs_indices).contiguous()
+            cur_rpn_features = point_features.index_select(0, bs_indices).contiguous()
             cur_roi = rois[bs_idx][:, 0:7].clone().contiguous()  # (N, 7)
 
             finite_roi_mask = torch.isfinite(cur_roi)
