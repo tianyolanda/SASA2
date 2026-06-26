@@ -334,8 +334,8 @@ class PointNet2Backbone(nn.Module):
                     cur_xyz[None, :, :].contiguous(), self.num_points_each_layer[i]
                 ).long()[0]
                 if cur_xyz.shape[0] < self.num_points_each_layer[i]:
-                    empty_num = self.num_points_each_layer[i] - cur_xyz.shape[1]
-                    cur_pt_idxs[0, -empty_num:] = cur_pt_idxs[0, :empty_num]
+                    empty_num = self.num_points_each_layer[i] - cur_xyz.shape[0]
+                    cur_pt_idxs[-empty_num:] = cur_pt_idxs[:empty_num].clone()
                 new_xyz_list.append(cur_xyz[cur_pt_idxs])
             new_xyz = torch.cat(new_xyz_list, dim=0)
 
