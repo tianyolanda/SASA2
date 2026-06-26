@@ -45,7 +45,8 @@ run_one() {
     --workers "${WORKERS}" \
     --ckpt_save_interval 1 \
     --max_ckpt_save_num 10 \
-    --extra_tag "${extra_tag}"
+    --extra_tag "${extra_tag}" \
+    --skip_eval
 
   echo "Finished ${name} at: $(date)"
 }
