@@ -16,6 +16,7 @@ class PartA2FCHead(RoIHeadTemplate):
         block = self.post_act_block
 
         c0 = self.model_cfg.ROI_AWARE_POOL.NUM_FEATURES // 2
+        self.skip_roi_sparse_conv = self.model_cfg.get('SKIP_ROI_SPARSE_CONV', False)
         self.conv_part = spconv.SparseSequential(
             block(4, 64, 3, padding=1, indice_key='rcnn_subm1'),
             block(64, c0, 3, padding=1, indice_key='rcnn_subm1_1'),
@@ -24,6 +25,15 @@ class PartA2FCHead(RoIHeadTemplate):
             block(input_channels, 64, 3, padding=1, indice_key='rcnn_subm2'),
             block(64, c0, 3, padding=1, indice_key='rcnn_subm1_2'),
         )
+        if self.skip_roi_sparse_conv:
+            self.part_dense_fc = nn.Sequential(
+                nn.Linear(4, c0, bias=False),
+                nn.ReLU(),
+            )
+            self.rpn_dense_fc = nn.Sequential(
+                nn.Linear(input_channels, c0, bias=False),
+                nn.ReLU(),
+            )
 
         shared_fc_list = []
         pool_size = self.model_cfg.ROI_AWARE_POOL.POOL_SIZE
@@ -200,6 +210,30 @@ class PartA2FCHead(RoIHeadTemplate):
         # RoI aware pooling
         pooled_part_features, pooled_rpn_features = self.roiaware_pool(batch_dict)
         batch_size_rcnn = pooled_part_features.shape[0]  # (B * N, out_x, out_y, out_z, 4)
+
+        if self.skip_roi_sparse_conv:
+            part_features = self.part_dense_fc(pooled_part_features)
+            rpn_features = self.rpn_dense_fc(pooled_rpn_features)
+            shared_feature = torch.cat((rpn_features, part_features), dim=-1)
+            shared_feature = shared_feature.permute(0, 4, 1, 2, 3).contiguous()
+            shared_feature = shared_feature.view(batch_size_rcnn, -1, 1)
+            shared_feature = self.shared_fc_layer(shared_feature)
+
+            rcnn_cls = self.cls_layers(shared_feature).transpose(1, 2).contiguous().squeeze(dim=1)
+            rcnn_reg = self.reg_layers(shared_feature).transpose(1, 2).contiguous().squeeze(dim=1)
+
+            if not self.training:
+                batch_cls_preds, batch_box_preds = self.generate_predicted_boxes(
+                    batch_size=batch_dict['batch_size'], rois=batch_dict['rois'], cls_preds=rcnn_cls, box_preds=rcnn_reg
+                )
+                batch_dict['batch_cls_preds'] = batch_cls_preds
+                batch_dict['batch_box_preds'] = batch_box_preds
+                batch_dict['cls_preds_normalized'] = False
+            else:
+                targets_dict['rcnn_cls'] = rcnn_cls
+                targets_dict['rcnn_reg'] = rcnn_reg
+                self.forward_ret_dict = targets_dict
+            return batch_dict
 
         # transform to sparse tensors
         sparse_shape = np.array(pooled_part_features.shape[1:4], dtype=np.int32)
