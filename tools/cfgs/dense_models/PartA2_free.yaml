@@ -1,0 +1,30 @@
+_BASE_CONFIG_: cfgs/dense_models/PartA2.yaml
+
+MODEL:
+    ROI_HEAD:
+        DISABLE_PART: True
+        SEG_MASK_SCORE_THRESH: 0.0
+        MIN_ROI_DIM: 0.001
+
+        NMS_CONFIG:
+            TRAIN:
+                NMS_TYPE: nms_gpu
+                MULTI_CLASSES_NMS: False
+                NMS_PRE_MAXSIZE: 2048
+                NMS_POST_MAXSIZE: 128
+                NMS_THRESH: 0.8
+            TEST:
+                NMS_TYPE: nms_gpu
+                MULTI_CLASSES_NMS: False
+                NMS_PRE_MAXSIZE: 1024
+                NMS_POST_MAXSIZE: 100
+                NMS_THRESH: 0.7
+
+        ROI_AWARE_POOL:
+            POOL_SIZE: 6
+            NUM_FEATURES: 128
+            MAX_POINTS_PER_VOXEL: 64
+
+        TARGET_CONFIG:
+            ROI_PER_IMAGE: 64
+

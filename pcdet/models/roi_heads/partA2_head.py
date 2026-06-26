@@ -127,13 +127,33 @@ class PartA2FCHead(RoIHeadTemplate):
         rois = batch_dict['rois']
 
         pooled_part_features_list, pooled_rpn_features_list = [], []
+        pool_size = self.model_cfg.ROI_AWARE_POOL.POOL_SIZE
+        if isinstance(pool_size, int):
+            pool_shape = (pool_size, pool_size, pool_size)
+        else:
+            pool_shape = tuple(pool_size)
+        min_roi_dim = float(self.model_cfg.get('MIN_ROI_DIM', 1e-3))
 
         for bs_idx in range(batch_size):
             bs_mask = (batch_idx == bs_idx)
-            cur_point_coords = point_coords[bs_mask]
-            cur_part_features = part_features[bs_mask]
-            cur_rpn_features = point_features[bs_mask]
-            cur_roi = rois[bs_idx][:, 0:7].contiguous()  # (N, 7)
+            cur_point_coords = point_coords[bs_mask].contiguous()
+            cur_part_features = part_features[bs_mask].contiguous()
+            cur_rpn_features = point_features[bs_mask].contiguous()
+            cur_roi = rois[bs_idx][:, 0:7].clone().contiguous()  # (N, 7)
+
+            finite_roi_mask = torch.isfinite(cur_roi)
+            if not finite_roi_mask.all():
+                cur_roi = torch.where(finite_roi_mask, cur_roi, cur_roi.new_zeros(cur_roi.shape))
+            cur_roi[:, 3:6] = torch.clamp(cur_roi[:, 3:6], min=min_roi_dim)
+
+            if cur_point_coords.shape[0] == 0:
+                pooled_part_features_list.append(cur_part_features.new_zeros(
+                    (cur_roi.shape[0], pool_shape[0], pool_shape[1], pool_shape[2], cur_part_features.shape[-1])
+                ))
+                pooled_rpn_features_list.append(cur_rpn_features.new_zeros(
+                    (cur_roi.shape[0], pool_shape[0], pool_shape[1], pool_shape[2], cur_rpn_features.shape[-1])
+                ))
+                continue
 
             pooled_part_features = self.roiaware_pool3d_layer.forward(
                 cur_roi, cur_point_coords, cur_part_features, pool_method='avg'
