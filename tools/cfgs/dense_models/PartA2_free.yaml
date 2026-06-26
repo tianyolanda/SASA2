@@ -1,5 +1,8 @@
 _BASE_CONFIG_: cfgs/dense_models/PartA2.yaml
 
+DATA_CONFIG:
+    _BASE_CONFIG_: cfgs/dataset_configs/dense_dataset.yaml
+
 MODEL:
     ROI_HEAD:
         DISABLE_PART: True
@@ -27,4 +30,3 @@ MODEL:
 
         TARGET_CONFIG:
             ROI_PER_IMAGE: 64
-
