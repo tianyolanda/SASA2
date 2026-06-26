@@ -1,9 +1,73 @@
-_BASE_CONFIG_: cfgs/dense_models/PartA2.yaml
+_BASE_CONFIG_: cfgs/kitti_models/PartA2.yaml
+
+CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist', 'Van']
 
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/dense_dataset.yaml
 
+    DATA_PROCESSOR:
+        - NAME: mask_points_and_boxes_outside_range
+          REMOVE_OUTSIDE_BOXES: True
+
+        - NAME: shuffle_points
+          SHUFFLE_ENABLED: {
+            'train': True,
+            'test': False
+          }
+
+        - NAME: transform_points_to_voxels
+          VOXEL_SIZE: [0.05, 0.05, 0.1]
+          MAX_POINTS_PER_VOXEL: 5
+          MAX_NUMBER_OF_VOXELS: {
+            'train': 16000,
+            'test': 40000
+          }
+
 MODEL:
+    DENSE_HEAD:
+        ANCHOR_GENERATOR_CONFIG: [
+            {
+                'class_name': 'Car',
+                'anchor_sizes': [[3.9, 1.6, 1.56]],
+                'anchor_rotations': [0, 1.57],
+                'anchor_bottom_heights': [-1.78],
+                'align_center': False,
+                'feature_map_stride': 8,
+                'matched_threshold': 0.6,
+                'unmatched_threshold': 0.45
+            },
+            {
+                'class_name': 'Pedestrian',
+                'anchor_sizes': [[0.8, 0.6, 1.73]],
+                'anchor_rotations': [0, 1.57],
+                'anchor_bottom_heights': [-0.6],
+                'align_center': False,
+                'feature_map_stride': 8,
+                'matched_threshold': 0.5,
+                'unmatched_threshold': 0.35
+            },
+            {
+                'class_name': 'Cyclist',
+                'anchor_sizes': [[1.76, 0.6, 1.73]],
+                'anchor_rotations': [0, 1.57],
+                'anchor_bottom_heights': [-0.6],
+                'align_center': False,
+                'feature_map_stride': 8,
+                'matched_threshold': 0.5,
+                'unmatched_threshold': 0.35
+            },
+            {
+                'class_name': 'Van',
+                'anchor_sizes': [[4.6, 1.9, 2.0]],
+                'anchor_rotations': [0, 1.57],
+                'anchor_bottom_heights': [-1.78],
+                'align_center': False,
+                'feature_map_stride': 8,
+                'matched_threshold': 0.6,
+                'unmatched_threshold': 0.45
+            }
+        ]
+
     ROI_HEAD:
         DISABLE_PART: True
         SEG_MASK_SCORE_THRESH: 0.0
@@ -30,3 +94,8 @@ MODEL:
 
         TARGET_CONFIG:
             ROI_PER_IMAGE: 64
+
+OPTIMIZATION:
+    BATCH_SIZE_PER_GPU: 2
+    NUM_EPOCHS: 80
+
