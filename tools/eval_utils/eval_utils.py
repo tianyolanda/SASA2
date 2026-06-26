@@ -57,9 +57,21 @@ def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, sa
         progress_bar = tqdm.tqdm(total=len(dataloader), leave=True, desc='eval', dynamic_ncols=True)
     start_time = time.time()
     for i, batch_dict in enumerate(dataloader):
-        load_data_to_gpu(batch_dict)
-        with torch.no_grad():
-            pred_dicts, ret_dict = model(batch_dict) # ret_dict = recall_dict
+        try:
+            load_data_to_gpu(batch_dict)
+            with torch.no_grad():
+                pred_dicts, ret_dict = model(batch_dict) # ret_dict = recall_dict
+        except Exception:
+            frame_id = batch_dict.get('frame_id', None)
+            debug_shapes = {}
+            for key in ['points', 'voxels', 'voxel_coords', 'voxel_num_points', 'gt_boxes']:
+                if key in batch_dict and hasattr(batch_dict[key], 'shape'):
+                    debug_shapes[key] = tuple(batch_dict[key].shape)
+            logger.exception(
+                'Evaluation failed at iter=%s, frame_id=%s, batch_shapes=%s',
+                i, frame_id, debug_shapes
+            )
+            raise
         disp_dict = {}
 
         statistics_info(cfg, ret_dict, metric, disp_dict) # 修改了metric, disp_dict

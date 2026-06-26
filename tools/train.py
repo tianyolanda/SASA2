@@ -44,6 +44,7 @@ def parse_config():
     parser.add_argument('--start_epoch', type=int, default=0, help='')
     parser.add_argument('--save_to_file', action='store_true', default=False, help='')
     parser.add_argument('--skip_eval', action='store_true', default=False, help='skip evaluation after training')
+    parser.add_argument('--eval_batch_size', type=int, default=None, required=False, help='total batch size for evaluation after training')
 
     args = parser.parse_args()
 
@@ -77,6 +78,8 @@ def main():
     else:
         assert args.batch_size % total_gpus == 0, 'Batch size should match the number of gpus'
         args.batch_size = args.batch_size // total_gpus
+    if args.eval_batch_size is not None:
+        assert args.eval_batch_size % total_gpus == 0, 'Eval batch size should match the number of gpus'
 
     args.epochs = cfg.OPTIMIZATION.NUM_EPOCHS if args.epochs is None else args.epochs
 
@@ -194,7 +197,7 @@ def main():
     test_set, test_loader, sampler = build_dataloader(
         dataset_cfg=cfg.DATA_CONFIG,
         class_names=cfg.CLASS_NAMES,
-        batch_size=args.batch_size,
+        batch_size=args.batch_size if args.eval_batch_size is None else args.eval_batch_size // total_gpus,
         dist=dist_train, workers=args.workers, logger=logger, training=False
     )
     eval_output_dir = output_dir / 'eval' / 'eval_with_train'
